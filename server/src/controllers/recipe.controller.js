@@ -1,4 +1,3 @@
-cat > server/src/controllers/recipe.controller.js << 'EOF'
 import {
   createRecipe,
   getUserRecipes,
@@ -14,8 +13,6 @@ function parseJsonField(field) {
   try {
     return JSON.parse(field);
   } catch {
-    // Fallback : si ce n'est pas du JSON valide, on tente une liste séparée par virgules
-    // (utile pour le champ "tags" envoyé en texte simple via Swagger/formulaires)
     if (typeof field === "string" && field.includes(",")) {
       return field.split(",").map((s) => s.trim()).filter(Boolean);
     }
@@ -101,4 +98,3 @@ export async function favorite(req, res) {
     res.status(500).json({ error: "Erreur serveur" });
   }
 }
-EOF
