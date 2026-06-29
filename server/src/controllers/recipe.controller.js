@@ -1,3 +1,4 @@
+cat > server/src/controllers/recipe.controller.js << 'EOF'
 import {
   createRecipe,
   getUserRecipes,
@@ -9,9 +10,18 @@ import {
 function parseJsonField(field) {
   if (!field) return undefined;
   if (typeof field === "object") return field;
+
   try {
     return JSON.parse(field);
   } catch {
+    // Fallback : si ce n'est pas du JSON valide, on tente une liste séparée par virgules
+    // (utile pour le champ "tags" envoyé en texte simple via Swagger/formulaires)
+    if (typeof field === "string" && field.includes(",")) {
+      return field.split(",").map((s) => s.trim()).filter(Boolean);
+    }
+    if (typeof field === "string" && field.trim().length > 0) {
+      return [field.trim()];
+    }
     return undefined;
   }
 }
@@ -55,7 +65,10 @@ export async function update(req, res) {
       ...req.body,
       ingredients: parseJsonField(req.body.ingredients),
       steps: parseJsonField(req.body.steps),
-      isFavorite: req.body.isFavorite !== undefined ? req.body.isFavorite === "true" || req.body.isFavorite === true : undefined,
+      isFavorite:
+        req.body.isFavorite !== undefined
+          ? req.body.isFavorite === "true" || req.body.isFavorite === true
+          : undefined,
     };
     const recipe = await updateRecipe(req.user.id, req.params.id, body, imageUrl);
     res.json({ recipe });
@@ -66,7 +79,6 @@ export async function update(req, res) {
     res.status(500).json({ error: "Erreur serveur" });
   }
 }
-
 export async function remove(req, res) {
   try {
     await deleteRecipe(req.user.id, req.params.id);
@@ -78,7 +90,6 @@ export async function remove(req, res) {
     res.status(500).json({ error: "Erreur serveur" });
   }
 }
-
 export async function favorite(req, res) {
   try {
     const recipe = await toggleFavorite(req.user.id, req.params.id);
@@ -90,3 +101,4 @@ export async function favorite(req, res) {
     res.status(500).json({ error: "Erreur serveur" });
   }
 }
+EOF
