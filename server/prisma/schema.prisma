@@ -1,19 +1,17 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
 }
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 enum Role {
   OWNER
   EDITOR
   READER
   COMMENTER
 }
-
 model User {
   id              String   @id @default(uuid())
   email           String   @unique
@@ -25,40 +23,32 @@ model User {
   allergies       String?
   defaultPortions Int?     @default(4)
   createdAt       DateTime @default(now())
-
   recipes         Recipe[]
   cookbookMembers CookbookMember[]
   comments        Comment[]
   messages        Message[]
   mealPlans       MealPlan[]
-
   @@unique([oauthProvider, oauthId])
 }
-
 model Cookbook {
   id          String   @id @default(uuid())
   name        String
   description String?
   createdAt   DateTime @default(now())
-
   members  CookbookMember[]
   recipes  Recipe[]
   messages Message[]
 }
-
 model CookbookMember {
   id         String   @id @default(uuid())
   cookbookId String
   userId     String
   role       Role     @default(READER)
   joinedAt   DateTime @default(now())
-
   cookbook Cookbook @relation(fields: [cookbookId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   @@unique([cookbookId, userId])
 }
-
 model Recipe {
   id          String   @id @default(uuid())
   title       String
@@ -69,66 +59,52 @@ model Recipe {
   imageUrl    String?
   isFavorite  Boolean  @default(false)
   createdAt   DateTime @default(now())
-
   userId      String?
   cookbookId  String?
   user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   cookbook    Cookbook? @relation(fields: [cookbookId], references: [id], onDelete: Cascade)
-
   ingredients Ingredient[]
   steps       Step[]
   tags        RecipeTag[]
   comments    Comment[]
   mealPlans   MealPlan[]
 }
-
 model Ingredient {
   id       String  @id @default(uuid())
   recipeId String
   name     String
   quantity Float?
   unit     String?
-
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 }
-
 model Step {
   id          String @id @default(uuid())
   recipeId    String
   order       Int
   instruction String
-
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 }
-
 model Tag {
   id   String @id @default(uuid())
   name String @unique
   type String?
-
   recipes RecipeTag[]
 }
-
 model RecipeTag {
   recipeId String
   tagId    String
-
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
-
   @@id([recipeId, tagId])
 }
-
 model MealPlan {
   id       String   @id @default(uuid())
   userId   String
   recipeId String
   date     DateTime
-
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 }
-
 model Comment {
   id        String   @id @default(uuid())
   recipeId  String
@@ -139,7 +115,6 @@ model Comment {
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-
 model Message {
   id         String   @id @default(uuid())
   cookbookId String
