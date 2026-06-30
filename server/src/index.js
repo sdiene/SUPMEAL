@@ -6,7 +6,7 @@ import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./lib/swagger.js";
 import authRoutes from "./routes/auth.routes.js";
 import recipeRoutes from "./routes/recipe.routes.js";
-
+import cookbookRoutes from "./routes/cookbook.routes.js";
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -15,6 +15,7 @@ app.use("/uploads", express.static(path.resolve("uploads")));
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/auth", authRoutes);
 app.use("/api/recipes", recipeRoutes);
+app.use("/api/cookbooks", cookbookRoutes);
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`SUPMEAL server running on port ${PORT}`));
