@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware.js";
 import { upload } from "../lib/multer.js";
+import commentRoutes from "./comment.routes.js";
 import {
   create,
   list,
@@ -129,4 +130,5 @@ router.delete("/:id", remove);
  *         description: Statut favori mis à jour
  */
 router.patch("/:id/favorite", favorite);
+router.use("/:recipeId/comments", commentRoutes);
 export default router;

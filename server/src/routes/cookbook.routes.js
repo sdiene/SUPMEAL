@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware.js";
+import messageRoutes from "./message.routes.js";
 import {
   create,
   list,
@@ -152,4 +153,6 @@ router.post("/:id/members", invite);
  */
 router.patch("/:id/members/:userId", updateRole);
 router.delete("/:id/members/:userId", removeMemberHandler);
+router.use("/:cookbookId/messages", messageRoutes);
+
 export default router;
