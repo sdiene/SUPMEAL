@@ -4,7 +4,6 @@ import {
   generateToken,
   sanitizeUser,
 } from "../services/auth.service.js";
-
 export async function register(req, res) {
   try {
     const { email, password, name } = req.body;
