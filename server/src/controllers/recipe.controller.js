@@ -9,7 +9,6 @@ import {
 function parseJsonField(field) {
   if (!field) return undefined;
   if (typeof field === "object") return field;
-
   try {
     return JSON.parse(field);
   } catch {
@@ -22,6 +21,13 @@ function parseJsonField(field) {
     return undefined;
   }
 }
+function mapError(err) {
+  const map = {
+    NOT_FOUND: [404, "Recette introuvable"],
+    FORBIDDEN: [403, "Permissions insuffisantes (rôle EDITOR requis)"],
+  };
+  return map[err.message] || [500, "Erreur serveur"];
+}
 export async function create(req, res) {
   try {
     const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
@@ -31,13 +37,16 @@ export async function create(req, res) {
       steps: parseJsonField(req.body.steps),
       tags: parseJsonField(req.body.tags),
     };
+
     if (!body.title) {
       return res.status(400).json({ error: "Le titre est requis" });
     }
+
     const recipe = await createRecipe(req.user.id, body, imageUrl);
     res.status(201).json({ recipe });
   } catch (err) {
-    res.status(500).json({ error: "Erreur serveur" });
+    const [status, message] = mapError(err);
+    res.status(status).json({ error: message });
   }
 }
 export async function list(req, res) {
@@ -49,10 +58,8 @@ export async function getOne(req, res) {
     const recipe = await getRecipeById(req.user.id, req.params.id);
     res.json({ recipe });
   } catch (err) {
-    if (err.message === "NOT_FOUND") {
-      return res.status(404).json({ error: "Recette introuvable" });
-    }
-    res.status(500).json({ error: "Erreur serveur" });
+    const [status, message] = mapError(err);
+    res.status(status).json({ error: message });
   }
 }
 export async function update(req, res) {
@@ -70,10 +77,8 @@ export async function update(req, res) {
     const recipe = await updateRecipe(req.user.id, req.params.id, body, imageUrl);
     res.json({ recipe });
   } catch (err) {
-    if (err.message === "NOT_FOUND") {
-      return res.status(404).json({ error: "Recette introuvable" });
-    }
-    res.status(500).json({ error: "Erreur serveur" });
+    const [status, message] = mapError(err);
+    res.status(status).json({ error: message });
   }
 }
 export async function remove(req, res) {
@@ -81,10 +86,8 @@ export async function remove(req, res) {
     await deleteRecipe(req.user.id, req.params.id);
     res.status(204).send();
   } catch (err) {
-    if (err.message === "NOT_FOUND") {
-      return res.status(404).json({ error: "Recette introuvable" });
-    }
-    res.status(500).json({ error: "Erreur serveur" });
+    const [status, message] = mapError(err);
+    res.status(status).json({ error: message });
   }
 }
 export async function favorite(req, res) {
@@ -92,9 +95,7 @@ export async function favorite(req, res) {
     const recipe = await toggleFavorite(req.user.id, req.params.id);
     res.json({ recipe });
   } catch (err) {
-    if (err.message === "NOT_FOUND") {
-      return res.status(404).json({ error: "Recette introuvable" });
-    }
-    res.status(500).json({ error: "Erreur serveur" });
+    const [status, message] = mapError(err);
+    res.status(status).json({ error: message });
   }
 }

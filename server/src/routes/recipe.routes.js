@@ -9,9 +9,7 @@ import {
   remove,
   favorite,
 } from "../controllers/recipe.controller.js";
-
 const router = Router();
-
 router.use(requireAuth);
 
 /**
@@ -25,7 +23,7 @@ router.use(requireAuth);
  *       200:
  *         description: Liste des recettes
  *   post:
- *     summary: Créer une recette personnelle
+ *     summary: Créer une recette (personnelle, ou dans un cookbook si cookbookId fourni)
  *     tags: [Recipes]
  *     security: [{ bearerAuth: [] }]
  *     requestBody:
@@ -35,16 +33,14 @@ router.use(requireAuth);
  *           schema:
  *             type: object
  *             properties:
- *               title:
+ *               title: { type: string }
+ *               prepTime: { type: integer }
+ *               cookTime: { type: integer }
+ *               servings: { type: integer }
+ *               source: { type: string }
+ *               cookbookId:
  *                 type: string
- *               prepTime:
- *                 type: integer
- *               cookTime:
- *                 type: integer
- *               servings:
- *                 type: integer
- *               source:
- *                 type: string
+ *                 description: Optionnel. Si fourni, la recette est créée dans ce cookbook (rôle EDITOR requis). Sinon, recette personnelle.
  *               ingredients:
  *                 type: string
  *                 description: JSON stringifié, ex. [{"name":"Farine","quantity":200,"unit":"g"}]
@@ -53,13 +49,15 @@ router.use(requireAuth);
  *                 description: JSON stringifié, ex. [{"order":1,"instruction":"Mélanger"}]
  *               tags:
  *                 type: string
- *                 description: JSON stringifié, ex. ["Dessert","Facile"]
+ *                 description: JSON stringifié ou liste séparée par virgules
  *               image:
  *                 type: string
  *                 format: binary
  *     responses:
  *       201:
  *         description: Recette créée
+ *       403:
+ *         description: Permissions insuffisantes (rôle EDITOR requis dans le cookbook)
  */
 router.get("/", list);
 router.post("/", upload.single("image"), create);
@@ -93,6 +91,8 @@ router.post("/", upload.single("image"), create);
  *     responses:
  *       200:
  *         description: Recette modifiée
+ *       403:
+ *         description: Permissions insuffisantes
  *   delete:
  *     summary: Supprimer une recette
  *     tags: [Recipes]
@@ -105,6 +105,8 @@ router.post("/", upload.single("image"), create);
  *     responses:
  *       204:
  *         description: Recette supprimée
+ *       403:
+ *         description: Permissions insuffisantes
  */
 router.get("/:id", getOne);
 router.put("/:id", upload.single("image"), update);
@@ -127,5 +129,4 @@ router.delete("/:id", remove);
  *         description: Statut favori mis à jour
  */
 router.patch("/:id/favorite", favorite);
-
 export default router;

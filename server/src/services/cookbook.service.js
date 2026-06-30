@@ -1,5 +1,13 @@
 import { prisma } from "../lib/prisma.js";
-
+const userSelect = {
+  id: true,
+  email: true,
+  name: true,
+  diet: true,
+  allergies: true,
+  defaultPortions: true,
+  createdAt: true,
+};
 export async function createCookbook(userId, { name, description }) {
   return prisma.cookbook.create({
     data: {
@@ -9,37 +17,33 @@ export async function createCookbook(userId, { name, description }) {
         create: { userId, role: "OWNER" },
       },
     },
-    include: { members: { include: { user: true } } },
+    include: { members: { include: { user: { select: userSelect } } } },
   });
 }
-
 export async function getUserCookbooks(userId) {
   return prisma.cookbook.findMany({
     where: { members: { some: { userId } } },
-    include: { members: { include: { user: true } } },
+    include: { members: { include: { user: { select: userSelect } } } },
     orderBy: { createdAt: "desc" },
   });
 }
-
 export async function getCookbookById(userId, cookbookId) {
   const cookbook = await prisma.cookbook.findFirst({
     where: { id: cookbookId, members: { some: { userId } } },
     include: {
-      members: { include: { user: true } },
+      members: { include: { user: { select: userSelect } } },
       recipes: { include: { ingredients: true, steps: true, tags: { include: { tag: true } } } },
     },
   });
   if (!cookbook) throw new Error("NOT_FOUND");
   return cookbook;
 }
-
 export async function getMemberRole(userId, cookbookId) {
   const member = await prisma.cookbookMember.findUnique({
     where: { cookbookId_userId: { cookbookId, userId } },
   });
   return member?.role ?? null;
 }
-
 export async function addMember(requesterId, cookbookId, targetEmail, role) {
   const requesterRole = await getMemberRole(requesterId, cookbookId);
   if (requesterRole !== "OWNER") throw new Error("FORBIDDEN");
@@ -54,10 +58,9 @@ export async function addMember(requesterId, cookbookId, targetEmail, role) {
 
   return prisma.cookbookMember.create({
     data: { cookbookId, userId: targetUser.id, role: role || "READER" },
-    include: { user: true },
+    include: { user: { select: userSelect } },
   });
 }
-
 export async function removeMember(requesterId, cookbookId, targetUserId) {
   const requesterRole = await getMemberRole(requesterId, cookbookId);
   if (requesterRole !== "OWNER") throw new Error("FORBIDDEN");
@@ -67,7 +70,6 @@ export async function removeMember(requesterId, cookbookId, targetUserId) {
     where: { cookbookId_userId: { cookbookId, userId: targetUserId } },
   });
 }
-
 export async function updateMemberRole(requesterId, cookbookId, targetUserId, role) {
   const requesterRole = await getMemberRole(requesterId, cookbookId);
   if (requesterRole !== "OWNER") throw new Error("FORBIDDEN");
@@ -75,10 +77,9 @@ export async function updateMemberRole(requesterId, cookbookId, targetUserId, ro
   return prisma.cookbookMember.update({
     where: { cookbookId_userId: { cookbookId, userId: targetUserId } },
     data: { role },
-    include: { user: true },
+    include: { user: { select: userSelect } },
   });
 }
-
 export async function deleteCookbook(requesterId, cookbookId) {
   const requesterRole = await getMemberRole(requesterId, cookbookId);
   if (requesterRole !== "OWNER") throw new Error("FORBIDDEN");
