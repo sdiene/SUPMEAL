@@ -10,6 +10,8 @@ import RecipesPage from "./pages/RecipesPage";
 import NewRecipePage from "./pages/NewRecipePage";
 import RecipeDetailPage from "./pages/RecipeDetailPage";
 import EditRecipePage from "./pages/EditRecipePage";
+import CookbooksPage from "./pages/CookbooksPage";
+import CookbookDetailPage from "./pages/CookbookDetailPage";
 function ProtectedLayout({ children }) {
   return (
     <ProtectedRoute>
@@ -30,6 +32,8 @@ export default function App() {
           <Route path="/recipes/new" element={<ProtectedLayout><NewRecipePage /></ProtectedLayout>} />
           <Route path="/recipes/:id" element={<ProtectedLayout><RecipeDetailPage /></ProtectedLayout>} />
           <Route path="/recipes/:id/edit" element={<ProtectedLayout><EditRecipePage /></ProtectedLayout>} />
+          <Route path="/cookbooks" element={<ProtectedLayout><CookbooksPage /></ProtectedLayout>} />
+          <Route path="/cookbooks/:id" element={<ProtectedLayout><CookbookDetailPage /></ProtectedLayout>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
