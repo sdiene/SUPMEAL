@@ -12,6 +12,7 @@ import RecipeDetailPage from "./pages/RecipeDetailPage";
 import EditRecipePage from "./pages/EditRecipePage";
 import CookbooksPage from "./pages/CookbooksPage";
 import CookbookDetailPage from "./pages/CookbookDetailPage";
+import SettingsPage from "./pages/SettingsPage";
 import EmailVerifiedPage from "./pages/EmailVerifiedPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 function ProtectedLayout({ children }) {
@@ -40,6 +41,7 @@ export default function App() {
           <Route path="/cookbooks" element={<ProtectedLayout><CookbooksPage /></ProtectedLayout>} />
           <Route path="/email-verified" element={<EmailVerifiedPage />} />
           <Route path="/cookbooks/:id" element={<ProtectedLayout><CookbookDetailPage /></ProtectedLayout>} />
+          <Route path="/settings" element={<ProtectedLayout><SettingsPage /></ProtectedLayout>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

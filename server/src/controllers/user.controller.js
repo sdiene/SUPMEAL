@@ -1,4 +1,4 @@
-import { updateProfile, changePassword } from "../services/user.service.js";
+import { updateProfile, changePassword, deleteAccount } from "../services/user.service.js";
 import { sanitizeUser } from "../services/auth.service.js";
 export async function updateMe(req, res) {
   try {
@@ -27,5 +27,14 @@ export async function updatePassword(req, res) {
     };
     const [status, message] = map[err.message] || [500, "Erreur serveur"];
     res.status(status).json({ error: message });
+  }
+}
+
+export async function deleteMe(req, res) {
+  try {
+    await deleteAccount(req.user.id);
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: "Erreur lors de la suppression du compte" });
   }
 }

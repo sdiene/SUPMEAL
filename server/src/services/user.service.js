@@ -12,6 +12,10 @@ export async function updateProfile(userId, { name, diet, allergies, defaultPort
     },
   });
 }
+export async function deleteAccount(userId) {
+  await prisma.user.delete({ where: { id: userId } });
+}
+
 export async function changePassword(userId, currentPassword, newPassword) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user.password) throw new Error("OAUTH_ONLY_ACCOUNT");

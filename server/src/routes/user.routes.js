@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware.js";
-import { updateMe, updatePassword } from "../controllers/user.controller.js";
+import { updateMe, updatePassword, deleteMe } from "../controllers/user.controller.js";
 const router = Router();
 router.use(requireAuth);
 
@@ -51,4 +51,17 @@ router.patch("/me", updateMe);
  *         description: Mot de passe actuel incorrect
  */
 router.patch("/me/password", updatePassword);
+/**
+ * @swagger
+ * /api/users/me:
+ *   delete:
+ *     summary: Supprimer mon compte définitivement
+ *     tags: [Users]
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       204:
+ *         description: Compte supprimé
+ */
+router.delete("/me", deleteMe);
+
 export default router;
