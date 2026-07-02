@@ -57,73 +57,73 @@ export default function RecipeForm({ initial = {}, onSubmit, loading }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Infos de base */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-        <h2 className="font-semibold text-gray-700">Informations générales</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
+        <h2 className="font-semibold text-gray-700 dark:text-gray-200">Informations générales</h2>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Titre *</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Titre *</label>
           <input
             type="text"
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
           />
         </div>
 
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Temps de prépa (min)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Temps de prépa (min)</label>
             <input
               type="number"
               value={prepTime}
               onChange={(e) => setPrepTime(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Temps de cuisson (min)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Temps de cuisson (min)</label>
             <input
               type="number"
               value={cookTime}
               onChange={(e) => setCookTime(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Portions</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Portions</label>
             <input
               type="number"
               value={servings}
               onChange={(e) => setServings(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Source (URL ou description)</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Source (URL ou description)</label>
           <input
             type="text"
             value={source}
             onChange={(e) => setSource(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Tags (séparés par virgules)</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags (séparés par virgules)</label>
           <input
             type="text"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
             placeholder="Dessert, Français, Facile"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Image</label>
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
@@ -133,8 +133,8 @@ export default function RecipeForm({ initial = {}, onSubmit, loading }) {
         </div>
       </div>
       {/* Ingrédients */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="font-semibold text-gray-700 mb-4">Ingrédients</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">Ingrédients</h2>
         <div className="space-y-3">
           {ingredients.map((ing, index) => (
             <div key={index} className="flex gap-2 items-center">
@@ -179,8 +179,8 @@ export default function RecipeForm({ initial = {}, onSubmit, loading }) {
       </div>
 
       {/* Étapes */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="font-semibold text-gray-700 mb-4">Étapes de préparation</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">Étapes de préparation</h2>
         <div className="space-y-3">
           {steps.map((step, index) => (
             <div key={index} className="flex gap-3 items-start">

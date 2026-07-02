@@ -148,9 +148,9 @@ export default function CookbookDetailPage() {
           <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-gray-600 text-sm mb-2 block">
             ← Retour
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">📚 {cookbook.name}</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">📚 {cookbook.name}</h1>
           {cookbook.description && (
-            <p className="text-gray-400 mt-1">{cookbook.description}</p>
+            <p className="text-gray-400 dark:text-gray-400 mt-1">{cookbook.description}</p>
           )}
           <p className="text-xs text-gray-400 mt-1">Mon rôle : <span className="font-medium text-blue-600">{myRole}</span></p>
         </div>
@@ -204,8 +204,8 @@ export default function CookbookDetailPage() {
         <div className="space-y-4">
           {/* Invitation (OWNER uniquement) */}
           {isOwner && (
-            <form onSubmit={handleInvite} className="bg-white rounded-xl border border-gray-200 p-6 space-y-3">
-              <h2 className="font-semibold text-gray-700">Inviter un membre</h2>
+            <form onSubmit={handleInvite} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-3">
+              <h2 className="font-semibold text-gray-700 dark:text-gray-200">Inviter un membre</h2>
               {inviteError && <p className="text-red-500 text-sm">{inviteError}</p>}
               <div className="flex gap-3">
                 <input
@@ -236,14 +236,14 @@ export default function CookbookDetailPage() {
             </form>
           )}
           {/* Liste membres */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             {cookbook.members.map((member) => (
-              <div key={member.id} className="flex items-center gap-4 p-4 border-b border-gray-100 last:border-0">
+              <div key={member.id} className="flex items-center gap-4 p-4 border-b border-gray-100 dark:border-gray-700 last:border-0">
                 <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm">
                   {member.user?.name?.[0]?.toUpperCase() || "?"}
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-800">{member.user?.name}</p>
+                  <p className="text-sm font-medium text-gray-800 dark:text-white">{member.user?.name}</p>
                   <p className="text-xs text-gray-400">{member.user?.email}</p>
                 </div>
                 {isOwner && member.userId !== user?.id ? (
@@ -276,8 +276,8 @@ export default function CookbookDetailPage() {
       )}
       {/* Messages */}
       {activeTab === "messages" && (
-        <div className="flex flex-col h-[60vh]">
-          <div className="flex-1 overflow-y-auto bg-white rounded-xl border border-gray-200 p-4 space-y-3 mb-4">
+        <div className="flex flex-col h-[60vh] dark:text-white">
+          <div className="flex-1 overflow-y-auto bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-3 mb-4">
             {messages.length === 0 ? (
               <p className="text-gray-400 text-center py-8">Aucun message pour l'instant</p>
             ) : (

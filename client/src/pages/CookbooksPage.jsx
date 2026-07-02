@@ -36,7 +36,7 @@ export default function CookbooksPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Mes cookbooks</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Mes cookbooks</h1>
           <p className="text-gray-400 text-sm mt-1">{cookbooks.length} cookbook{cookbooks.length > 1 ? "s" : ""}</p>
         </div>
         <button
@@ -48,8 +48,8 @@ export default function CookbooksPage() {
       </div>
       {/* Formulaire création */}
       {showForm && (
-        <form onSubmit={handleCreate} className="bg-white rounded-xl border border-gray-200 p-6 mb-6 space-y-4">
-          <h2 className="font-semibold text-gray-700">Créer un cookbook</h2>
+        <form onSubmit={handleCreate} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6 space-y-4">
+          <h2 className="font-semibold text-gray-700 dark:text-gray-200">Créer un cookbook</h2>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
@@ -100,9 +100,9 @@ export default function CookbooksPage() {
             <Link
               key={cb.id}
               to={`/cookbooks/${cb.id}`}
-              className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow"
+              className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
             >
-              <h2 className="font-semibold text-gray-800 text-lg mb-1">📚 {cb.name}</h2>
+              <h2 className="font-semibold text-gray-800 dark:text-white text-lg mb-1">📚 {cb.name}</h2>
               {cb.description && (
                 <p className="text-sm text-gray-400 mb-3 truncate">{cb.description}</p>
               )}

@@ -54,7 +54,7 @@ export default function RecipeDetailPage() {
       )}
       {/* Titre + actions */}
       <div className="flex items-start justify-between gap-4 mb-4">
-        <h1 className="text-2xl font-bold text-gray-800">{recipe.title}</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{recipe.title}</h1>
         <div className="flex gap-2 flex-shrink-0">
           <button
             onClick={handleFavorite}
@@ -78,7 +78,7 @@ export default function RecipeDetailPage() {
         </div>
       </div>
       {/* Méta */}
-      <div className="flex gap-4 text-sm text-gray-500 mb-4">
+      <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
         {recipe.prepTime && <span>⏱ Prépa : {recipe.prepTime} min</span>}
         {recipe.cookTime && <span>🔥 Cuisson : {recipe.cookTime} min</span>}
         {recipe.servings && <span>👥 {recipe.servings} portions</span>}
@@ -101,11 +101,11 @@ export default function RecipeDetailPage() {
 
       {/* Ingrédients */}
       {recipe.ingredients?.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-4">
-          <h2 className="font-semibold text-gray-700 mb-4">🛒 Ingrédients</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-4">
+          <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">🛒 Ingrédients</h2>
           <ul className="space-y-2">
             {recipe.ingredients.map((ing) => (
-              <li key={ing.id} className="flex items-center gap-2 text-sm text-gray-600">
+              <li key={ing.id} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                 <span className="w-2 h-2 rounded-full bg-blue-400 flex-shrink-0"></span>
                 <span className="font-medium">{ing.name}</span>
                 {ing.quantity && (
@@ -121,8 +121,8 @@ export default function RecipeDetailPage() {
 
       {/* Étapes */}
       {recipe.steps?.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="font-semibold text-gray-700 mb-4">📋 Étapes</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">📋 Étapes</h2>
           <ol className="space-y-4">
             {[...recipe.steps]
               .sort((a, b) => a.order - b.order)
@@ -131,7 +131,7 @@ export default function RecipeDetailPage() {
                   <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-600 text-sm font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
                     {index + 1}
                   </span>
-                  <p className="text-gray-600 text-sm leading-relaxed">{step.instruction}</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{step.instruction}</p>
                 </li>
               ))}
           </ol>
