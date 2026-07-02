@@ -13,16 +13,19 @@ enum Role {
   COMMENTER
 }
 model User {
-  id              String   @id @default(uuid())
-  email           String   @unique
-  password        String?
-  name            String
-  oauthProvider   String?
-  oauthId         String?
-  diet            String?
-  allergies       String?
-  defaultPortions Int?     @default(4)
-  createdAt       DateTime @default(now())
+  id                 String    @id @default(uuid())
+  email              String    @unique
+  password           String?
+  name               String
+  oauthProvider      String?
+  oauthId            String?
+  diet               String?
+  allergies          String?
+  defaultPortions    Int?      @default(4)
+  emailVerified      Boolean   @default(false)
+  verifyToken        String?
+  verifyTokenExpiry  DateTime?
+  createdAt          DateTime  @default(now())
   recipes         Recipe[]
   cookbookMembers CookbookMember[]
   comments        Comment[]

@@ -1,9 +1,7 @@
 import { Router } from "express";
-import { register, login, me } from "../controllers/auth.controller.js";
+import { register, login, me, verifyEmailHandler } from "../controllers/auth.controller.js";
 import { requireAuth } from "../middlewares/auth.middleware.js";
-
 const router = Router();
-
 /**
  * @swagger
  * /api/auth/register:
@@ -57,7 +55,6 @@ router.post("/register", register);
  *         description: Identifiants invalides
  */
 router.post("/login", login);
-
 /**
  * @swagger
  * /api/auth/me:
@@ -74,4 +71,20 @@ router.post("/login", login);
  */
 router.get("/me", requireAuth, me);
 
+/**
+ * @swagger
+ * /api/auth/verify-email:
+ *   get:
+ *     summary: Vérifier l'email via token (lien reçu par email)
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       302:
+ *         description: Redirection vers le frontend après vérification
+ */
+router.get("/verify-email", verifyEmailHandler);
 export default router;

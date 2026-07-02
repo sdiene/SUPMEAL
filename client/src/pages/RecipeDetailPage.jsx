@@ -1,22 +1,18 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getRecipe, deleteRecipe, toggleFavorite } from "../api/recipes";
-
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-
 export default function RecipeDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     getRecipe(id)
       .then((res) => setRecipe(res.data.recipe))
       .catch(() => navigate("/recipes"))
       .finally(() => setLoading(false));
   }, [id]);
-
   async function handleDelete() {
     if (!confirm("Supprimer cette recette ?")) return;
     try {
@@ -26,7 +22,6 @@ export default function RecipeDetailPage() {
       console.error(err);
     }
   }
-
   async function handleFavorite() {
     try {
       const res = await toggleFavorite(id);
@@ -35,10 +30,8 @@ export default function RecipeDetailPage() {
       console.error(err);
     }
   }
-
   if (loading) return <p className="text-gray-400">Chargement...</p>;
   if (!recipe) return null;
-
   return (
     <div className="max-w-2xl mx-auto">
       {/* Header */}
@@ -59,7 +52,6 @@ export default function RecipeDetailPage() {
           className="w-full h-64 object-cover rounded-xl mb-6"
         />
       )}
-
       {/* Titre + actions */}
       <div className="flex items-start justify-between gap-4 mb-4">
         <h1 className="text-2xl font-bold text-gray-800">{recipe.title}</h1>
@@ -85,14 +77,12 @@ export default function RecipeDetailPage() {
           </button>
         </div>
       </div>
-
       {/* Méta */}
       <div className="flex gap-4 text-sm text-gray-500 mb-4">
         {recipe.prepTime && <span>⏱ Prépa : {recipe.prepTime} min</span>}
         {recipe.cookTime && <span>🔥 Cuisson : {recipe.cookTime} min</span>}
         {recipe.servings && <span>👥 {recipe.servings} portions</span>}
       </div>
-
       {/* Tags */}
       {recipe.tags?.length > 0 && (
         <div className="flex gap-2 flex-wrap mb-6">
@@ -103,7 +93,6 @@ export default function RecipeDetailPage() {
           ))}
         </div>
       )}
-
       {recipe.source && (
         <p className="text-sm text-gray-400 mb-6">
           Source : <span className="text-blue-500">{recipe.source}</span>

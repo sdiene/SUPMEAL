@@ -12,6 +12,8 @@ import RecipeDetailPage from "./pages/RecipeDetailPage";
 import EditRecipePage from "./pages/EditRecipePage";
 import CookbooksPage from "./pages/CookbooksPage";
 import CookbookDetailPage from "./pages/CookbookDetailPage";
+import EmailVerifiedPage from "./pages/EmailVerifiedPage";
+import VerifyEmailPage from "./pages/VerifyEmailPage";
 function ProtectedLayout({ children }) {
   return (
     <ProtectedRoute>
@@ -27,12 +29,16 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/oauth-callback" element={<OAuthCallbackPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/email-verified" element={<EmailVerifiedPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/" element={<ProtectedLayout><DashboardPage /></ProtectedLayout>} />
           <Route path="/recipes" element={<ProtectedLayout><RecipesPage /></ProtectedLayout>} />
           <Route path="/recipes/new" element={<ProtectedLayout><NewRecipePage /></ProtectedLayout>} />
           <Route path="/recipes/:id" element={<ProtectedLayout><RecipeDetailPage /></ProtectedLayout>} />
           <Route path="/recipes/:id/edit" element={<ProtectedLayout><EditRecipePage /></ProtectedLayout>} />
           <Route path="/cookbooks" element={<ProtectedLayout><CookbooksPage /></ProtectedLayout>} />
+          <Route path="/email-verified" element={<EmailVerifiedPage />} />
           <Route path="/cookbooks/:id" element={<ProtectedLayout><CookbookDetailPage /></ProtectedLayout>} />
         </Routes>
       </AuthProvider>
