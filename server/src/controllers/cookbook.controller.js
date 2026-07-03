@@ -6,6 +6,7 @@ import {
   removeMember,
   updateMemberRole,
   deleteCookbook,
+  addRecipeToCookbook,
 } from "../services/cookbook.service.js";
 export async function create(req, res) {
   try {
@@ -83,6 +84,23 @@ export async function remove(req, res) {
   } catch (err) {
     const map = {
       FORBIDDEN: [403, "Seul le créateur peut supprimer ce cookbook"],
+    };
+    const [status, message] = map[err.message] || [500, "Erreur serveur"];
+    res.status(status).json({ error: message });
+  }
+}
+
+export async function addRecipe(req, res) {
+  try {
+    const { recipeId } = req.body;
+    if (!recipeId) return res.status(400).json({ error: "recipeId requis" });
+
+    const recipe = await addRecipeToCookbook(req.user.id, req.params.id, recipeId);
+    res.status(201).json({ recipe });
+  } catch (err) {
+    const map = {
+      FORBIDDEN: [403, "Permissions insuffisantes (rôle EDITOR requis)"],
+      NOT_FOUND: [404, "Recette introuvable"],
     };
     const [status, message] = map[err.message] || [500, "Erreur serveur"];
     res.status(status).json({ error: message });

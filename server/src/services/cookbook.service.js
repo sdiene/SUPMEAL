@@ -86,3 +86,51 @@ export async function deleteCookbook(requesterId, cookbookId) {
 
   await prisma.cookbook.delete({ where: { id: cookbookId } });
 }
+
+export async function addRecipeToCookbook(userId, cookbookId, recipeId) {
+  const role = await getMemberRole(userId, cookbookId);
+  if (!role || role === "READER" || role === "COMMENTER") throw new Error("FORBIDDEN");
+
+  const original = await prisma.recipe.findFirst({
+    where: { id: recipeId },
+    include: { ingredients: true, steps: true, tags: { include: { tag: true } } },
+  });
+  if (!original) throw new Error("NOT_FOUND");
+
+  return prisma.recipe.create({
+    data: {
+      title: original.title,
+      prepTime: original.prepTime,
+      cookTime: original.cookTime,
+      servings: original.servings,
+      source: original.source,
+      imageUrl: original.imageUrl,
+      cookbookId,
+      userId: null,
+      ingredients: {
+        create: original.ingredients.map((i) => ({
+          name: i.name,
+          quantity: i.quantity,
+          unit: i.unit,
+        })),
+      },
+      steps: {
+        create: original.steps.map((s) => ({
+          order: s.order,
+          instruction: s.instruction,
+        })),
+      },
+      tags: original.tags.length ? {
+        create: original.tags.map((rt) => ({
+          tag: {
+            connectOrCreate: {
+              where: { name: rt.tag.name },
+              create: { name: rt.tag.name },
+            },
+          },
+        })),
+      } : undefined,
+    },
+    include: { ingredients: true, steps: true, tags: { include: { tag: true } } },
+  });
+}

@@ -9,6 +9,7 @@ import {
   removeMemberHandler,
   updateRole,
   remove,
+  addRecipe,
 } from "../controllers/cookbook.controller.js";
 const router = Router();
 router.use(requireAuth);
@@ -153,6 +154,31 @@ router.post("/:id/members", invite);
  */
 router.patch("/:id/members/:userId", updateRole);
 router.delete("/:id/members/:userId", removeMemberHandler);
+/**
+ * @swagger
+ * /api/cookbooks/{id}/recipes:
+ *   post:
+ *     summary: Ajouter une recette existante dans un cookbook (copie)
+ *     tags: [Cookbooks]
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [recipeId]
+ *             properties:
+ *               recipeId: { type: string }
+ *     responses:
+ *       201:
+ *         description: Recette ajoutée au cookbook
+ */
+router.post("/:id/recipes", addRecipe);
 router.use("/:cookbookId/messages", messageRoutes);
-
 export default router;

@@ -15,3 +15,6 @@ export const postMessage = (cookbookId, content) =>
   apiClient.post(`/api/cookbooks/${cookbookId}/messages`, { content });
 export const deleteMessage = (cookbookId, messageId) =>
   apiClient.delete(`/api/cookbooks/${cookbookId}/messages/${messageId}`);
+
+export const addRecipeToCookbook = (cookbookId, recipeId) =>
+  apiClient.post(`/api/cookbooks/${cookbookId}/recipes`, { recipeId });

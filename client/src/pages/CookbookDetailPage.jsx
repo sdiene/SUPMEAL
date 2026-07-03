@@ -9,8 +9,10 @@ import {
   getMessages,
   postMessage,
   deleteMessage,
+  addRecipeToCookbook,
 } from "../api/cookbooks";
 import { useAuth } from "../context/AuthContext";
+import apiClient from "../api/client";
 import RecipeCard from "../components/RecipeCard";
 import { toggleFavorite } from "../api/recipes";
 const ROLES = ["OWNER", "EDITOR", "READER", "COMMENTER"];
@@ -25,6 +27,9 @@ export default function CookbookDetailPage() {
   const [inviteRole, setInviteRole] = useState("READER");
   const [inviting, setInviting] = useState(false);
   const [inviteError, setInviteError] = useState("");
+  const [showAddRecipe, setShowAddRecipe] = useState(false);
+  const [myRecipes, setMyRecipes] = useState([]);
+  const [addingRecipe, setAddingRecipe] = useState(false);
   const [messages, setMessages] = useState([]);
   const [msgContent, setMsgContent] = useState("");
   const [sendingMsg, setSendingMsg] = useState(false);
@@ -35,6 +40,12 @@ export default function CookbookDetailPage() {
       .catch(() => navigate("/cookbooks"))
       .finally(() => setLoading(false));
   }, [id]);
+  useEffect(() => {
+    if (showAddRecipe) {
+      apiClient.get("/api/recipes").then((res) => setMyRecipes(res.data.recipes));
+    }
+  }, [showAddRecipe]);
+
   useEffect(() => {
     if (activeTab === "messages") {
       getMessages(id).then((res) => setMessages(res.data.messages));
@@ -49,6 +60,22 @@ export default function CookbookDetailPage() {
   }, [messages]);
   const myRole = cookbook?.members.find((m) => m.userId === user?.id)?.role;
   const isOwner = myRole === "OWNER";
+  async function handleAddRecipe(recipeId) {
+    setAddingRecipe(true);
+    try {
+      const res = await addRecipeToCookbook(id, recipeId);
+      setCookbook((prev) => ({
+        ...prev,
+        recipes: [...prev.recipes, res.data.recipe],
+      }));
+      setShowAddRecipe(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setAddingRecipe(false);
+    }
+  }
+
   async function handleInvite(e) {
     e.preventDefault();
     setInviting(true);
@@ -182,8 +209,63 @@ export default function CookbookDetailPage() {
       {/* Recettes */}
       {activeTab === "recipes" && (
         <div>
+          {(myRole === "OWNER" || myRole === "EDITOR") && (
+            <div className="flex gap-3 mb-6">
+              <button
+                onClick={() => setShowAddRecipe(true)}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
+              >
+                + Ajouter une recette existante
+              </button>
+              
+              <a
+                href={"/recipes/new?cookbookId=" + id}
+                className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                + Créer une nouvelle recette
+              </a>
+            </div>
+          )}
+
+          {showAddRecipe && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-semibold text-gray-800 dark:text-white">Ajouter une recette</h2>
+                  <button onClick={() => setShowAddRecipe(false)} className="text-gray-400 hover:text-gray-600 text-xl">×</button>
+                </div>
+                {myRecipes.length === 0 ? (
+                  <p className="text-gray-400 text-center py-8">Aucune recette personnelle disponible</p>
+                ) : (
+                  <div className="space-y-2">
+                    {myRecipes.map((recipe) => (
+                      <div
+                        key={recipe.id}
+                        className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                      >
+                        <div>
+                          <p className="font-medium text-gray-800 dark:text-white text-sm">{recipe.title}</p>
+                          <p className="text-xs text-gray-400">
+                            {recipe.prepTime ? recipe.prepTime + " min prep" : ""}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleAddRecipe(recipe.id)}
+                          disabled={addingRecipe}
+                          className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-700 disabled:opacity-50"
+                        >
+                          Ajouter
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {cookbook.recipes.length === 0 ? (
-            <div className="bg-white rounded-xl border border-dashed border-gray-300 p-12 text-center">
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
               <p className="text-gray-400">Aucune recette dans ce cookbook</p>
             </div>
           ) : (
