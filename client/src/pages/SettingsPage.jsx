@@ -17,7 +17,6 @@ export default function SettingsPage() {
   const [pwSuccess, setPwSuccess] = useState("");
   const [pwError, setPwError] = useState("");
   const [pwLoading, setPwLoading] = useState(false);
-  const [deleteConfirm, setDeleteConfirm] = useState("");
   const [deleteError, setDeleteError] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
   async function handleProfileUpdate(e) {
@@ -51,10 +50,11 @@ export default function SettingsPage() {
     }
   }
   async function handleDeleteAccount() {
-    if (deleteConfirm !== "SUPPRIMER") {
-      setDeleteError('Tapez exactement "SUPPRIMER" pour confirmer');
-      return;
-    }
+    const confirmed = window.confirm(
+      "Êtes-vous sûr de vouloir supprimer votre compte ?\n\nCette action est irréversible. Toutes vos recettes et données seront définitivement supprimées."
+    );
+    if (!confirmed) return;
+
     setDeleteLoading(true);
     setDeleteError("");
     try {
@@ -67,7 +67,6 @@ export default function SettingsPage() {
       setDeleteLoading(false);
     }
   }
-
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Paramètres</h1>
@@ -174,27 +173,13 @@ export default function SettingsPage() {
           cookbooks et données seront supprimés.
         </p>
         {deleteError && <p className="text-red-500 text-sm mb-3">{deleteError}</p>}
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Tapez <strong>SUPPRIMER</strong> pour confirmer
-            </label>
-            <input
-              type="text"
-              value={deleteConfirm}
-              onChange={(e) => setDeleteConfirm(e.target.value)}
-              placeholder="SUPPRIMER"
-              className="w-full border border-red-300 dark:border-red-700 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-          </div>
-          <button
-            onClick={handleDeleteAccount}
-            disabled={deleteLoading}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
-          >
-            {deleteLoading ? "Suppression..." : "🗑️ Supprimer mon compte"}
-          </button>
-        </div>
+        <button
+          onClick={handleDeleteAccount}
+          disabled={deleteLoading}
+          className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
+        >
+          {deleteLoading ? "Suppression..." : "🗑️ Supprimer mon compte"}
+        </button>
       </div>
     </div>
   );
