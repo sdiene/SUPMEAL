@@ -4,7 +4,8 @@ import {
   verifyEmail,
   generateToken,
   sanitizeUser,
-} from "../services/auth.service.js"
+} from "../services/auth.service.js";
+
 export async function register(req, res) {
   try {
     const { email, password, name } = req.body;
@@ -22,6 +23,7 @@ export async function register(req, res) {
     res.status(500).json({ error: "Erreur serveur" });
   }
 }
+
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
@@ -37,13 +39,14 @@ export async function login(req, res) {
     res.status(status).json({ error: message });
   }
 }
+
 export async function verifyEmailHandler(req, res) {
   try {
     const { token } = req.query;
     if (!token) return res.status(400).json({ error: "Token manquant" });
+
     await verifyEmail(token);
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-    res.redirect(`${frontendUrl}/email-verified`);
+    res.json({ message: "Email vérifié avec succès" });
   } catch (err) {
     if (err.message === "INVALID_OR_EXPIRED_TOKEN") {
       return res.status(400).json({ error: "Lien invalide ou expiré" });
@@ -51,6 +54,7 @@ export async function verifyEmailHandler(req, res) {
     res.status(500).json({ error: "Erreur serveur" });
   }
 }
+
 export async function me(req, res) {
   res.json({ user: req.user });
 }
