@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { searchRecipes } from "../api/search";
 import { getPublicRecipes } from "../api/recipes";
+import { getPublicCookbooks, copyRecipeToMyRecipes } from "../api/cookbooks";
 import { getCookbooks } from "../api/cookbooks";
 import RecipeCard from "../components/RecipeCard";
 import { toggleFavorite } from "../api/recipes";
@@ -20,9 +21,39 @@ export default function SearchPage() {
   const [publicResults, setPublicResults] = useState([]);
   const [publicLoading, setPublicLoading] = useState(false);
   const [publicSearched, setPublicSearched] = useState(false);
+  const [publicCookbooks, setPublicCookbooks] = useState([]);
+  const [cookbooksLoading, setCookbooksLoading] = useState(false);
+  const [cookbooksSearched, setCookbooksSearched] = useState(false);
+  const [copySuccess, setCopySuccess] = useState("");
   useEffect(() => {
     getCookbooks().then((res) => setCookbooks(res.data.cookbooks));
   }, []);
+  async function handleCookbooksSearch(e) {
+    e?.preventDefault();
+    setCookbooksLoading(true);
+    setCookbooksSearched(true);
+    try {
+      const params = {};
+      if (q) params.q = q;
+      const res = await getPublicCookbooks(params);
+      setPublicCookbooks(res.data.cookbooks);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCookbooksLoading(false);
+    }
+  }
+
+  async function handleCopyRecipe(recipeId) {
+    try {
+      await copyRecipeToMyRecipes(recipeId);
+      setCopySuccess(recipeId);
+      setTimeout(() => setCopySuccess(""), 2000);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async function handlePublicSearch(e) {
     e?.preventDefault();
     setPublicLoading(true);
@@ -121,6 +152,16 @@ export default function SearchPage() {
           }`}
         >
           🌍 Recettes publiques
+        </button>
+        <button
+          onClick={() => setActiveTab("cookbooks-public")}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === "cookbooks-public"
+              ? "bg-white dark:bg-gray-700 text-gray-800 dark:text-white shadow-sm"
+              : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+          }`}
+        >
+          📚 Cookbooks publics
         </button>
       </div>
 
@@ -323,6 +364,87 @@ export default function SearchPage() {
             <div className="text-center py-12 text-gray-300 dark:text-gray-600">
               <p className="text-5xl mb-3">🌍</p>
               <p>Recherchez parmi les recettes partagées par la communauté</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Cookbooks publics */}
+      {activeTab === "cookbooks-public" && (
+        <div>
+          <form onSubmit={handleCookbooksSearch} className="flex gap-3 mb-6">
+            <input
+              type="text"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Rechercher un cookbook public..."
+              className="flex-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            <button
+              type="submit"
+              disabled={cookbooksLoading}
+              className="bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
+            >
+              {cookbooksLoading ? "..." : "🔍 Rechercher"}
+            </button>
+          </form>
+
+          {cookbooksSearched && publicCookbooks.length === 0 && (
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
+              <p className="text-gray-400">Aucun cookbook public trouvé</p>
+            </div>
+          )}
+
+          {publicCookbooks.length > 0 && (
+            <div className="space-y-4">
+              <p className="text-sm text-gray-400">{publicCookbooks.length} cookbook{publicCookbooks.length > 1 ? "s" : ""} trouvé{publicCookbooks.length > 1 ? "s" : ""}</p>
+              {publicCookbooks.map((cb) => (
+                <div key={cb.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="font-semibold text-gray-800 dark:text-white text-lg">📚 {cb.name}</h3>
+                      {cb.description && <p className="text-sm text-gray-400 mt-1">{cb.description}</p>}
+                      <p className="text-xs text-gray-400 mt-1">
+                        Par {cb.members[0]?.user?.name || "Anonyme"} · {cb.recipes.length} recette{cb.recipes.length > 1 ? "s" : ""}
+                      </p>
+                    </div>
+                    <span className="text-xs bg-green-50 text-green-600 px-2 py-1 rounded-full">🌍 Public</span>
+                  </div>
+                  {cb.recipes.length > 0 && (
+                    <div className="grid grid-cols-2 gap-3 mt-4">
+                      {cb.recipes.slice(0, 4).map((recipe) => (
+                        <div key={recipe.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-800 dark:text-white truncate">{recipe.title}</p>
+                            <p className="text-xs text-gray-400">
+                              {recipe.prepTime ? `⏱ ${recipe.prepTime} min` : ""}
+                              {recipe.cookTime ? ` · 🔥 ${recipe.cookTime} min` : ""}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => handleCopyRecipe(recipe.id)}
+                            disabled={copySuccess === recipe.id}
+                            className={`ml-3 text-xs px-2 py-1.5 rounded-lg flex-shrink-0 transition-colors ${
+                              copySuccess === recipe.id
+                                ? "bg-green-100 text-green-600"
+                                : "bg-red-600 text-white hover:bg-red-700"
+                            }`}
+                          >
+                            {copySuccess === recipe.id ? "✅ Copié" : "📋 Copier"}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!cookbooksSearched && (
+            <div className="text-center py-12 text-gray-300 dark:text-gray-600">
+              <p className="text-5xl mb-3">📚</p>
+              <p>Recherchez parmi les cookbooks partagés par la communauté</p>
             </div>
           )}
         </div>

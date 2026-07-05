@@ -10,6 +10,7 @@ import {
   postMessage,
   deleteMessage,
   addRecipeToCookbook,
+  toggleCookbookPublic,
 } from "../api/cookbooks";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/client";
@@ -118,6 +119,15 @@ export default function CookbookDetailPage() {
       console.error(err);
     }
   }
+  async function handleTogglePublic() {
+    try {
+      const res = await toggleCookbookPublic(id);
+      setCookbook((prev) => ({ ...prev, isPublic: res.data.cookbook.isPublic }));
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async function handleDeleteCookbook() {
     if (!confirm("Supprimer ce cookbook définitivement ?")) return;
     try {
@@ -182,12 +192,24 @@ export default function CookbookDetailPage() {
           <p className="text-xs text-gray-400 mt-1">Mon rôle : <span className="font-medium text-blue-600">{myRole}</span></p>
         </div>
         {isOwner && (
-          <button
-            onClick={handleDeleteCookbook}
-            className="text-sm bg-red-50 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors"
-          >
-            🗑️ Supprimer
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleTogglePublic}
+              className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${
+                cookbook.isPublic
+                  ? "bg-green-50 text-green-600 hover:bg-green-100"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200"
+              }`}
+            >
+              {cookbook.isPublic ? "🌍 Public" : "🔒 Privé"}
+            </button>
+            <button
+              onClick={handleDeleteCookbook}
+              className="text-sm bg-red-50 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors"
+            >
+              🗑️ Supprimer
+            </button>
+          </div>
         )}
       </div>
       {/* Tabs */}

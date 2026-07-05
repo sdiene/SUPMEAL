@@ -18,3 +18,12 @@ export const deleteMessage = (cookbookId, messageId) =>
 
 export const addRecipeToCookbook = (cookbookId, recipeId) =>
   apiClient.post(`/api/cookbooks/${cookbookId}/recipes`, { recipeId });
+
+export const toggleCookbookPublic = (cookbookId) =>
+  apiClient.patch(`/api/cookbooks/${cookbookId}/public`);
+
+export const getPublicCookbooks = (params) =>
+  apiClient.get("/api/cookbooks/public", { params });
+
+export const copyRecipeToMyRecipes = (recipeId) =>
+  apiClient.post("/api/cookbooks/copy-recipe", { recipeId });

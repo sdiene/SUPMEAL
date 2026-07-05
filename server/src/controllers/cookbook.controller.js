@@ -7,6 +7,9 @@ import {
   updateMemberRole,
   deleteCookbook,
   addRecipeToCookbook,
+  toggleCookbookPublic,
+  getPublicCookbooks,
+  copyRecipeToUser,
 } from "../services/cookbook.service.js";
 export async function create(req, res) {
   try {
@@ -100,6 +103,45 @@ export async function addRecipe(req, res) {
   } catch (err) {
     const map = {
       FORBIDDEN: [403, "Permissions insuffisantes (rôle EDITOR requis)"],
+      NOT_FOUND: [404, "Recette introuvable"],
+    };
+    const [status, message] = map[err.message] || [500, "Erreur serveur"];
+    res.status(status).json({ error: message });
+  }
+}
+
+export async function togglePublic(req, res) {
+  try {
+    const cookbook = await toggleCookbookPublic(req.user.id, req.params.id);
+    res.json({ cookbook });
+  } catch (err) {
+    const map = {
+      FORBIDDEN: [403, "Seul le créateur peut modifier la visibilité"],
+      NOT_FOUND: [404, "Cookbook introuvable"],
+    };
+    const [status, message] = map[err.message] || [500, "Erreur serveur"];
+    res.status(status).json({ error: message });
+  }
+}
+
+export async function listPublicCookbooks(req, res) {
+  try {
+    const cookbooks = await getPublicCookbooks(req.query);
+    res.json({ cookbooks, count: cookbooks.length });
+  } catch (err) {
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+}
+
+export async function copyRecipe(req, res) {
+  try {
+    const { recipeId } = req.body;
+    if (!recipeId) return res.status(400).json({ error: "recipeId requis" });
+    const recipe = await copyRecipeToUser(req.user.id, recipeId);
+    res.status(201).json({ recipe });
+  } catch (err) {
+    const map = {
+      FORBIDDEN: [403, "Cette recette n'est pas publique"],
       NOT_FOUND: [404, "Recette introuvable"],
     };
     const [status, message] = map[err.message] || [500, "Erreur serveur"];

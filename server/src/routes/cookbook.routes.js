@@ -10,6 +10,9 @@ import {
   updateRole,
   remove,
   addRecipe,
+  togglePublic,
+  listPublicCookbooks,
+  copyRecipe,
 } from "../controllers/cookbook.controller.js";
 const router = Router();
 router.use(requireAuth);
@@ -180,5 +183,62 @@ router.delete("/:id/members/:userId", removeMemberHandler);
  *         description: Recette ajoutée au cookbook
  */
 router.post("/:id/recipes", addRecipe);
+
+/**
+ * @swagger
+ * /api/cookbooks/public:
+ *   get:
+ *     summary: Lister les cookbooks publics
+ *     tags: [Cookbooks]
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: Liste des cookbooks publics
+ */
+router.get("/public", listPublicCookbooks);
+
+/**
+ * @swagger
+ * /api/cookbooks/{id}/public:
+ *   patch:
+ *     summary: Basculer la visibilité publique d'un cookbook (OWNER uniquement)
+ *     tags: [Cookbooks]
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: Visibilité mise à jour
+ */
+router.patch("/:id/public", togglePublic);
+
+/**
+ * @swagger
+ * /api/cookbooks/copy-recipe:
+ *   post:
+ *     summary: Copier une recette publique dans ses recettes perso
+ *     tags: [Cookbooks]
+ *     security: [{ bearerAuth: [] }]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [recipeId]
+ *             properties:
+ *               recipeId: { type: string }
+ *     responses:
+ *       201:
+ *         description: Recette copiée
+ */
+router.post("/copy-recipe", copyRecipe);
 router.use("/:cookbookId/messages", messageRoutes);
 export default router;

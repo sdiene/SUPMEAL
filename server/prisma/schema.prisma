@@ -37,6 +37,7 @@ model Cookbook {
   id          String   @id @default(uuid())
   name        String
   description String?
+  isPublic    Boolean  @default(false)
   createdAt   DateTime @default(now())
   members  CookbookMember[]
   recipes  Recipe[]

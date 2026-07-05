@@ -134,3 +134,90 @@ export async function addRecipeToCookbook(userId, cookbookId, recipeId) {
     include: { ingredients: true, steps: true, tags: { include: { tag: true } } },
   });
 }
+
+export async function toggleCookbookPublic(userId, cookbookId) {
+  const role = await getMemberRole(userId, cookbookId);
+  if (role !== "OWNER") throw new Error("FORBIDDEN");
+
+  const cookbook = await prisma.cookbook.findUnique({ where: { id: cookbookId } });
+  if (!cookbook) throw new Error("NOT_FOUND");
+
+  return prisma.cookbook.update({
+    where: { id: cookbookId },
+    data: { isPublic: !cookbook.isPublic },
+  });
+}
+
+export async function getPublicCookbooks(filters = {}) {
+  const { q } = filters;
+  const where = { AND: [{ isPublic: true }] };
+  if (q) where.AND.push({ name: { contains: q, mode: "insensitive" } });
+
+  return prisma.cookbook.findMany({
+    where,
+    include: {
+      members: {
+        where: { role: "OWNER" },
+        include: { user: { select: { id: true, name: true } } },
+      },
+      recipes: {
+        include: {
+          ingredients: true,
+          steps: true,
+          tags: { include: { tag: true } },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function copyRecipeToUser(userId, recipeId) {
+  const recipe = await prisma.recipe.findUnique({
+    where: { id: recipeId },
+    include: {
+      ingredients: true,
+      steps: { orderBy: { order: "asc" } },
+      tags: { include: { tag: true } },
+      cookbook: true,
+    },
+  });
+
+  if (!recipe) throw new Error("NOT_FOUND");
+  if (!recipe.cookbook?.isPublic && !recipe.isPublic) throw new Error("FORBIDDEN");
+
+  return prisma.recipe.create({
+    data: {
+      title: recipe.title + " (copie)",
+      prepTime: recipe.prepTime,
+      cookTime: recipe.cookTime,
+      servings: recipe.servings,
+      source: recipe.source,
+      imageUrl: recipe.imageUrl,
+      userId,
+      ingredients: {
+        create: recipe.ingredients.map((i) => ({
+          name: i.name,
+          quantity: i.quantity,
+          unit: i.unit,
+        })),
+      },
+      steps: {
+        create: recipe.steps.map((s) => ({
+          order: s.order,
+          instruction: s.instruction,
+        })),
+      },
+      tags: recipe.tags.length ? {
+        create: recipe.tags.map((rt) => ({
+          tag: {
+            connectOrCreate: {
+              where: { name: rt.tag.name },
+              create: { name: rt.tag.name },
+            },
+          },
+        })),
+      } : undefined,
+    },
+  });
+}

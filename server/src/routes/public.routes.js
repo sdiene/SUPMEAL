@@ -62,4 +62,48 @@ router.get("/recipes", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/public/cookbooks:
+ *   get:
+ *     summary: Lister les cookbooks publics (accessible sans authentification)
+ *     tags: [Public]
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: Liste des cookbooks publics
+ */
+router.get("/cookbooks", async (req, res) => {
+  try {
+    const { q } = req.query;
+    const where = { AND: [{ isPublic: true }] };
+    if (q) where.AND.push({ name: { contains: q, mode: "insensitive" } });
+
+    const cookbooks = await prisma.cookbook.findMany({
+      where,
+      include: {
+        members: {
+          where: { role: "OWNER" },
+          include: { user: { select: { id: true, name: true } } },
+        },
+        recipes: {
+          include: {
+            ingredients: true,
+            steps: true,
+            tags: { include: { tag: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.json({ cookbooks, count: cookbooks.length });
+  } catch (err) {
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
 export default router;
