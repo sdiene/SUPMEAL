@@ -14,6 +14,7 @@ import CookbooksPage from "./pages/CookbooksPage";
 import CookbookDetailPage from "./pages/CookbookDetailPage";
 import SettingsPage from "./pages/SettingsPage";
 import SearchPage from "./pages/SearchPage";
+import FavoritesPage from "./pages/FavoritesPage";
 import EmailVerifiedPage from "./pages/EmailVerifiedPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 function ProtectedLayout({ children }) {
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="/cookbooks/:id" element={<ProtectedLayout><CookbookDetailPage /></ProtectedLayout>} />
           <Route path="/settings" element={<ProtectedLayout><SettingsPage /></ProtectedLayout>} />
           <Route path="/search" element={<ProtectedLayout><SearchPage /></ProtectedLayout>} />
+          <Route path="/favorites" element={<ProtectedLayout><FavoritesPage /></ProtectedLayout>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

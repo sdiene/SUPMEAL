@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 const navItems = [
   { to: "/", label: "Dashboard", icon: "🏠" },
   { to: "/recipes", label: "Mes recettes", icon: "🍽️" },
+  { to: "/favorites", label: "Favoris", icon: "⭐" },
   { to: "/cookbooks", label: "Cookbooks", icon: "📚" },
   { to: "/search", label: "Rechercher", icon: "🔍" },
   { to: "/settings", label: "Paramètres", icon: "⚙️" },

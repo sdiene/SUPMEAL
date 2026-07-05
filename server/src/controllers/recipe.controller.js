@@ -5,6 +5,7 @@ import {
   updateRecipe,
   deleteRecipe,
   toggleFavorite,
+  togglePublic,
 } from "../services/recipe.service.js";
 function parseJsonField(field) {
   if (!field) return undefined;
@@ -97,5 +98,17 @@ export async function favorite(req, res) {
   } catch (err) {
     const [status, message] = mapError(err);
     res.status(status).json({ error: message });
+  }
+}
+
+export async function publicToggle(req, res) {
+  try {
+    const recipe = await togglePublic(req.user.id, req.params.id);
+    res.json({ recipe });
+  } catch (err) {
+    if (err.message === "NOT_FOUND") {
+      return res.status(404).json({ error: "Recette introuvable ou non personnelle" });
+    }
+    res.status(500).json({ error: "Erreur serveur" });
   }
 }

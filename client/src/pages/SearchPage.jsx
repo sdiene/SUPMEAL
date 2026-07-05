@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { searchRecipes } from "../api/search";
+import { getPublicRecipes } from "../api/recipes";
 import { getCookbooks } from "../api/cookbooks";
 import RecipeCard from "../components/RecipeCard";
 import { toggleFavorite } from "../api/recipes";
@@ -15,9 +16,33 @@ export default function SearchPage() {
   const [maxPrepTime, setMaxPrepTime] = useState("");
   const [maxCookTime, setMaxCookTime] = useState("");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [activeTab, setActiveTab] = useState("mes-recettes");
+  const [publicResults, setPublicResults] = useState([]);
+  const [publicLoading, setPublicLoading] = useState(false);
+  const [publicSearched, setPublicSearched] = useState(false);
   useEffect(() => {
     getCookbooks().then((res) => setCookbooks(res.data.cookbooks));
   }, []);
+  async function handlePublicSearch(e) {
+    e?.preventDefault();
+    setPublicLoading(true);
+    setPublicSearched(true);
+    try {
+      const params = {};
+      if (q) params.q = q;
+      if (tags) params.tags = tags;
+      if (ingredient) params.ingredient = ingredient;
+      if (maxPrepTime) params.maxPrepTime = maxPrepTime;
+      if (maxCookTime) params.maxCookTime = maxCookTime;
+      const res = await getPublicRecipes(params);
+      setPublicResults(res.data.recipes);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setPublicLoading(false);
+    }
+  }
+
   async function handleSearch(e) {
     e?.preventDefault();
     setLoading(true);
@@ -62,6 +87,8 @@ export default function SearchPage() {
     setFavoritesOnly(false);
     setResults([]);
     setSearched(false);
+    setPublicResults([]);
+    setPublicSearched(false);
   }
 
   return (
@@ -69,9 +96,33 @@ export default function SearchPage() {
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">
         Rechercher
       </h1>
-      <p className="text-gray-400 text-sm mb-6">
-        Filtrez parmi toutes vos recettes et cookbooks
+      <p className="text-gray-400 text-sm mb-4">
+        Filtrez parmi toutes vos recettes et cookbooks, ou explorez les recettes publiques
       </p>
+
+      {/* Onglets */}
+      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-6 w-fit">
+        <button
+          onClick={() => setActiveTab("mes-recettes")}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === "mes-recettes"
+              ? "bg-white dark:bg-gray-700 text-gray-800 dark:text-white shadow-sm"
+              : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+          }`}
+        >
+          🍽️ Mes recettes
+        </button>
+        <button
+          onClick={() => setActiveTab("public")}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === "public"
+              ? "bg-white dark:bg-gray-700 text-gray-800 dark:text-white shadow-sm"
+              : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+          }`}
+        >
+          🌍 Recettes publiques
+        </button>
+      </div>
 
       {/* Formulaire de recherche */}
       <form
@@ -206,8 +257,79 @@ export default function SearchPage() {
         </div>
       </form>
 
-      {/* Résultats */}
-      {searched && (
+      {/* Résultats publiques */}
+      {activeTab === "public" && (
+        <div>
+          <form onSubmit={handlePublicSearch} className="flex gap-3 mb-6">
+            <input
+              type="text"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Rechercher une recette publique..."
+              className="flex-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            <button
+              type="submit"
+              disabled={publicLoading}
+              className="bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
+            >
+              {publicLoading ? "..." : "🔍 Rechercher"}
+            </button>
+          </form>
+
+          {publicSearched && publicResults.length === 0 && (
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
+              <p className="text-gray-400">Aucune recette publique trouvée</p>
+            </div>
+          )}
+
+          {publicResults.length > 0 && (
+            <div>
+              <p className="text-sm text-gray-400 mb-4">{publicResults.length} recette{publicResults.length > 1 ? "s" : ""} trouvée{publicResults.length > 1 ? "s" : ""}</p>
+              <div className="grid grid-cols-3 gap-4">
+                {publicResults.map((recipe) => (
+                  <div key={recipe.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
+                    {recipe.imageUrl ? (
+                      <img
+                        src={"http://localhost:3000" + recipe.imageUrl}
+                        alt={recipe.title}
+                        className="w-full h-40 object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-40 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-4xl">🍽️</div>
+                    )}
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-800 dark:text-white">{recipe.title}</h3>
+                      <p className="text-xs text-gray-400 mt-1">Par {recipe.user?.name || "Anonyme"}</p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {recipe.prepTime ? `⏱ ${recipe.prepTime} min` : ""}
+                        {recipe.cookTime ? ` · 🔥 ${recipe.cookTime} min` : ""}
+                      </p>
+                      <div className="flex gap-1 mt-2 flex-wrap">
+                        {recipe.tags?.slice(0, 3).map((rt) => (
+                          <span key={rt.tagId || rt.tag?.name} className="text-xs bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full">
+                            {rt.tag?.name}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!publicSearched && (
+            <div className="text-center py-12 text-gray-300 dark:text-gray-600">
+              <p className="text-5xl mb-3">🌍</p>
+              <p>Recherchez parmi les recettes partagées par la communauté</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Résultats mes recettes */}
+      {activeTab === "mes-recettes" && searched && (
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
@@ -238,7 +360,7 @@ export default function SearchPage() {
           )}
         </div>
       )}
-      {!searched && (
+      {activeTab === "mes-recettes" && !searched && (
         <div className="text-center py-12 text-gray-300 dark:text-gray-600">
           <p className="text-5xl mb-3">🍽️</p>
           <p>Utilisez les filtres ci-dessus pour trouver vos recettes</p>

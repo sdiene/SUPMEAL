@@ -1,7 +1,6 @@
 import { prisma } from "../lib/prisma.js";
 import { getMemberRole } from "./cookbook.service.js";
 const ROLE_LEVELS = { READER: 1, COMMENTER: 2, EDITOR: 3, OWNER: 4 };
-
 async function assertCookbookAccess(userId, cookbookId, minRole) {
   const role = await getMemberRole(userId, cookbookId);
   if (!role) throw new Error("FORBIDDEN");
@@ -136,3 +135,14 @@ export async function toggleFavorite(userId, recipeId) {
     data: { isFavorite: !recipe.isFavorite },
   });
 }
+
+export async function togglePublic(userId, recipeId) {
+  const recipe = await prisma.recipe.findFirst({ where: { id: recipeId, userId } });
+  if (!recipe) throw new Error("NOT_FOUND");
+
+  return prisma.recipe.update({
+    where: { id: recipeId },
+    data: { isPublic: !recipe.isPublic },
+  });
+}
+

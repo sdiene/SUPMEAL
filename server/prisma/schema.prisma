@@ -61,6 +61,7 @@ model Recipe {
   source      String?
   imageUrl    String?
   isFavorite  Boolean  @default(false)
+  isPublic    Boolean  @default(false)
   createdAt   DateTime @default(now())
   userId      String?
   cookbookId  String?

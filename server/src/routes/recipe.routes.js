@@ -9,6 +9,7 @@ import {
   update,
   remove,
   favorite,
+  publicToggle,
 } from "../controllers/recipe.controller.js";
 const router = Router();
 router.use(requireAuth);
@@ -130,5 +131,23 @@ router.delete("/:id", remove);
  *         description: Statut favori mis à jour
  */
 router.patch("/:id/favorite", favorite);
+
+/**
+ * @swagger
+ * /api/recipes/{id}/public:
+ *   patch:
+ *     summary: Basculer la visibilité publique d'une recette perso
+ *     tags: [Recipes]
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: Visibilité mise à jour
+ */
+router.patch("/:id/public", publicToggle);
 router.use("/:recipeId/comments", commentRoutes);
 export default router;

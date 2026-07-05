@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { getRecipe, deleteRecipe, toggleFavorite } from "../api/recipes";
+import { getRecipe, deleteRecipe, toggleFavorite, togglePublic } from "../api/recipes";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export default function RecipeDetailPage() {
   const { id } = useParams();
@@ -22,6 +22,15 @@ export default function RecipeDetailPage() {
       console.error(err);
     }
   }
+  async function handlePublicToggle() {
+    try {
+      const res = await togglePublic(id);
+      setRecipe((prev) => ({ ...prev, isPublic: res.data.recipe.isPublic }));
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async function handleFavorite() {
     try {
       const res = await toggleFavorite(id);
@@ -63,9 +72,21 @@ export default function RecipeDetailPage() {
           >
             {recipe.isFavorite ? "⭐" : "☆"}
           </button>
+          {recipe.userId && (
+            <button
+              onClick={handlePublicToggle}
+              className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${
+                recipe.isPublic
+                  ? "bg-green-50 text-green-600 hover:bg-green-100"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200"
+              }`}
+            >
+              {recipe.isPublic ? "🌍 Publique" : "🔒 Privée"}
+            </button>
+          )}
           <Link
             to={`/recipes/${id}/edit`}
-            className="text-sm bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-200 transition-colors"
+            className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
           >
             ✏️ Modifier
           </Link>
