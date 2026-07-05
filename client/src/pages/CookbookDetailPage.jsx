@@ -53,7 +53,7 @@ export default function CookbookDetailPage() {
         getMessages(id).then((res) => setMessages(res.data.messages));
       }, 5000);
       return () => clearInterval(interval);
-    }
+    } 
   }, [activeTab, id]);
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -71,11 +71,11 @@ export default function CookbookDetailPage() {
       setShowAddRecipe(false);
     } catch (err) {
       console.error(err);
-    } finally {
+    } finally { 
       setAddingRecipe(false);
     }
   }
-
+  
   async function handleInvite(e) {
     e.preventDefault();
     setInviting(true);
