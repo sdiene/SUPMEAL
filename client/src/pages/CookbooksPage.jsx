@@ -9,6 +9,7 @@ export default function CookbooksPage() {
   const [description, setDescription] = useState("");
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState("");
+  const [cbSearch, setCbSearch] = useState("");
   useEffect(() => {
     getCookbooks()
       .then((res) => setCookbooks(res.data.cookbooks))
@@ -88,8 +89,24 @@ export default function CookbooksPage() {
           </div>
         </form>
       )}
+      {/* Recherche */}
+      {cookbooks.length > 0 && (
+        <div className="mb-4">
+          <input
+            type="text"
+            value={cbSearch}
+            onChange={(e) => setCbSearch(e.target.value)}
+            placeholder="Rechercher un cookbook..."
+            className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-red-500"
+          />
+        </div>
+      )}
+
       {/* Liste */}
-      {cookbooks.length === 0 ? (
+      {cookbooks.filter((cb) =>
+        cb.name.toLowerCase().includes(cbSearch.toLowerCase()) ||
+        (cb.description || "").toLowerCase().includes(cbSearch.toLowerCase())
+      ).length === 0 ? (
         <div className="bg-white rounded-xl border border-dashed border-gray-300 p-12 text-center">
           <p className="text-4xl mb-3">📚</p>
           <p className="text-gray-400">Aucun cookbook pour l'instant</p>

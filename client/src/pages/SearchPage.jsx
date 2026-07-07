@@ -1,97 +1,58 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { searchRecipes } from "../api/search";
 import { getPublicRecipes, toggleFavorite } from "../api/recipes";
-import { getCookbooks, getPublicCookbooks, copyRecipeToMyRecipes } from "../api/cookbooks";
-import RecipeCard from "../components/RecipeCard";
+import { getPublicCookbooks, copyRecipeToMyRecipes } from "../api/cookbooks";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export default function SearchPage() {
-  const [activeTab, setActiveTab] = useState("mes-recettes");
-  const [cookbooks, setCookbooks] = useState([]);
-  const [q, setQ] = useState("");
-  const [cookbookId, setCookbookId] = useState("");
-  const [tags, setTags] = useState("");
-  const [ingredient, setIngredient] = useState("");
-  const [maxPrepTime, setMaxPrepTime] = useState("");
-  const [maxCookTime, setMaxCookTime] = useState("");
-  const [favoritesOnly, setFavoritesOnly] = useState(false);
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [searched, setSearched] = useState(false);
-  const [publicQ, setPublicQ] = useState("");
-  const [publicResults, setPublicResults] = useState([]);
-  const [publicLoading, setPublicLoading] = useState(false);
-  const [publicSearched, setPublicSearched] = useState(false);
-  const [cbQ, setCbQ] = useState("");
+  const [activeTab, setActiveTab] = useState("public-recipes");
+  const [rq, setRq] = useState("");
+  const [rtags, setRtags] = useState("");
+  const [ringredient, setRingredient] = useState("");
+  const [rmaxPrep, setRmaxPrep] = useState("");
+  const [rmaxCook, setRmaxCook] = useState("");
+  const [publicRecipes, setPublicRecipes] = useState([]);
+  const [rLoading, setRLoading] = useState(false);
+  const [rSearched, setRSearched] = useState(false);
+  const [cq, setCq] = useState("");
   const [publicCookbooks, setPublicCookbooks] = useState([]);
-  const [cbLoading, setCbLoading] = useState(false);
-  const [cbSearched, setCbSearched] = useState(false);
+  const [cLoading, setCLoading] = useState(false);
+  const [cSearched, setCSearched] = useState(false);
   const [copySuccess, setCopySuccess] = useState("");
-  useEffect(() => {
-    getCookbooks().then((res) => setCookbooks(res.data.cookbooks));
-  }, []);
-  async function handleSearch(e) {
+  async function handleRecipeSearch(e) {
     e?.preventDefault();
-    setLoading(true);
-    setSearched(true);
+    setRLoading(true);
+    setRSearched(true);
     try {
       const params = {};
-      if (q) params.q = q;
-      if (cookbookId) params.cookbookId = cookbookId;
-      if (tags) params.tags = tags;
-      if (ingredient) params.ingredient = ingredient;
-      if (maxPrepTime) params.maxPrepTime = maxPrepTime;
-      if (maxCookTime) params.maxCookTime = maxCookTime;
-      if (favoritesOnly) params.favoritesOnly = "true";
-      const res = await searchRecipes(params);
-      setResults(res.data.recipes);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }
-  async function handlePublicSearch(e) {
-    e?.preventDefault();
-    setPublicLoading(true);
-    setPublicSearched(true);
-    try {
-      const params = {};
-      if (publicQ) params.q = publicQ;
+      if (rq) params.q = rq;
+      if (rtags) params.tags = rtags;
+      if (ringredient) params.ingredient = ringredient;
+      if (rmaxPrep) params.maxPrepTime = rmaxPrep;
+      if (rmaxCook) params.maxCookTime = rmaxCook;
       const res = await getPublicRecipes(params);
-      setPublicResults(res.data.recipes);
+      setPublicRecipes(res.data.recipes);
     } catch (err) {
       console.error(err);
     } finally {
-      setPublicLoading(false);
+      setRLoading(false);
     }
   }
-  async function handleCbSearch(e) {
+  async function handleCookbookSearch(e) {
     e?.preventDefault();
-    setCbLoading(true);
-    setCbSearched(true);
+    setCLoading(true);
+    setCSearched(true);
     try {
       const params = {};
-      if (cbQ) params.q = cbQ;
+      if (cq) params.q = cq;
       const res = await getPublicCookbooks(params);
       setPublicCookbooks(res.data.cookbooks);
     } catch (err) {
       console.error(err);
     } finally {
-      setCbLoading(false);
+      setCLoading(false);
     }
   }
-  async function handleFavoriteToggle(id) {
-    try {
-      const res = await toggleFavorite(id);
-      setResults((prev) =>
-        prev.map((r) => r.id === id ? { ...r, isFavorite: res.data.recipe.isFavorite } : r)
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  }
-  async function handleCopyRecipe(recipeId) {
+  async function handleCopy(recipeId) {
     try {
       await copyRecipeToMyRecipes(recipeId);
       setCopySuccess(recipeId);
@@ -100,22 +61,21 @@ export default function SearchPage() {
       console.error(err);
     }
   }
-  const tabs = [
-    { id: "mes-recettes", label: "🍽️ Mes recettes" },
-    { id: "public", label: "🌍 Recettes publiques" },
-    { id: "cookbooks-public", label: "📚 Cookbooks publics" },
-  ];
-
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">Rechercher</h1>
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">
+        🌍 Découverte
+      </h1>
       <p className="text-gray-400 text-sm mb-6">
-        Filtrez parmi vos recettes ou explorez la communauté
+        Explorez les recettes et cookbooks partagés par la communauté
       </p>
 
       {/* Onglets */}
       <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-6 w-fit">
-        {tabs.map((tab) => (
+        {[
+          { id: "public-recipes", label: "��️ Recettes publiques" },
+          { id: "public-cookbooks", label: "📚 Cookbooks publics" },
+        ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
@@ -130,167 +90,83 @@ export default function SearchPage() {
         ))}
       </div>
 
-      {/* ===== Mes recettes ===== */}
-      {activeTab === "mes-recettes" && (
+      {/* ===== Recettes publiques ===== */}
+      {activeTab === "public-recipes" && (
         <div>
-          <form onSubmit={handleSearch} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">🔍 Recherche par titre</label>
+          <form onSubmit={handleRecipeSearch} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-6 space-y-3">
+            <div>
               <input
                 type="text"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Ex : poulet, tarte, soupe..."
-                className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+                value={rq}
+                onChange={(e) => setRq(e.target.value)}
+                placeholder="Rechercher par titre..."
+                className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">📚 Cookbook</label>
-                <select
-                  value={cookbookId}
-                  onChange={(e) => setCookbookId(e.target.value)}
-                  className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                >
-                  <option value="">Tous (perso + cookbooks)</option>
-                  {cookbooks.map((cb) => (
-                    <option key={cb.id} value={cb.id}>{cb.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">🛒 Ingrédient</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🛒 Ingrédient</label>
                 <input
                   type="text"
-                  value={ingredient}
-                  onChange={(e) => setIngredient(e.target.value)}
-                  placeholder="Ex : poulet, farine..."
-                  className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  value={ringredient}
+                  onChange={(e) => setRingredient(e.target.value)}
+                  placeholder="Ex : poulet..."
+                  className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">🏷️ Tags</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🏷️ Tags</label>
                 <input
                   type="text"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
+                  value={rtags}
+                  onChange={(e) => setRtags(e.target.value)}
                   placeholder="Ex : Dessert, Facile..."
-                  className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">⏱ Prépa max (min)</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">⏱ Prépa max (min)</label>
                 <input
                   type="number"
-                  value={maxPrepTime}
-                  onChange={(e) => setMaxPrepTime(e.target.value)}
+                  value={rmaxPrep}
+                  onChange={(e) => setRmaxPrep(e.target.value)}
                   placeholder="Ex : 30"
-                  className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">🔥 Cuisson max (min)</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🔥 Cuisson max (min)</label>
                 <input
                   type="number"
-                  value={maxCookTime}
-                  onChange={(e) => setMaxCookTime(e.target.value)}
+                  value={rmaxCook}
+                  onChange={(e) => setRmaxCook(e.target.value)}
                   placeholder="Ex : 45"
-                  className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
-              <div className="flex items-center gap-3 pt-6">
-                <input
-                  type="checkbox"
-                  id="favoritesOnly"
-                  checked={favoritesOnly}
-                  onChange={(e) => setFavoritesOnly(e.target.checked)}
-                  className="w-4 h-4 accent-red-600"
-                />
-                <label htmlFor="favoritesOnly" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  ⭐ Favoris uniquement
-                </label>
-              </div>
             </div>
-            <div className="flex gap-3">
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
-              >
-                {loading ? "Recherche..." : "🔍 Rechercher"}
-              </button>
-              <button
-                type="button"
-                onClick={() => { setQ(""); setCookbookId(""); setTags(""); setIngredient(""); setMaxPrepTime(""); setMaxCookTime(""); setFavoritesOnly(false); setResults([]); setSearched(false); }}
-                className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600"
-              >
-                Réinitialiser
-              </button>
-            </div>
-          </form>
-
-          {searched && (
-            <div>
-              <p className="text-sm text-gray-400 mb-4">
-                {results.length} recette{results.length > 1 ? "s" : ""} trouvée{results.length > 1 ? "s" : ""}
-              </p>
-              {results.length === 0 ? (
-                <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
-                  <p className="text-4xl mb-3">🔍</p>
-                  <p className="text-gray-400">Aucune recette ne correspond à vos critères</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-3 gap-4">
-                  {results.map((recipe) => (
-                    <RecipeCard key={recipe.id} recipe={recipe} onFavoriteToggle={handleFavoriteToggle} />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {!searched && (
-            <div className="text-center py-12 text-gray-300 dark:text-gray-600">
-              <p className="text-5xl mb-3">🍽️</p>
-              <p>Utilisez les filtres ci-dessus pour trouver vos recettes</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ===== Recettes publiques ===== */}
-      {activeTab === "public" && (
-        <div>
-          <form onSubmit={handlePublicSearch} className="flex gap-3 mb-6">
-            <input
-              type="text"
-              value={publicQ}
-              onChange={(e) => setPublicQ(e.target.value)}
-              placeholder="Rechercher une recette publique..."
-              className="flex-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
             <button
               type="submit"
-              disabled={publicLoading}
+              disabled={rLoading}
               className="bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
             >
-              {publicLoading ? "..." : "🔍 Rechercher"}
+              {rLoading ? "Recherche..." : "🔍 Rechercher"}
             </button>
           </form>
 
-          {publicSearched && publicResults.length === 0 && (
+          {rSearched && publicRecipes.length === 0 && (
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
               <p className="text-gray-400">Aucune recette publique trouvée</p>
             </div>
           )}
 
-          {publicResults.length > 0 && (
+          {publicRecipes.length > 0 && (
             <div>
               <p className="text-sm text-gray-400 mb-4">
-                {publicResults.length} recette{publicResults.length > 1 ? "s" : ""} trouvée{publicResults.length > 1 ? "s" : ""}
+                {publicRecipes.length} recette{publicRecipes.length > 1 ? "s" : ""} trouvée{publicRecipes.length > 1 ? "s" : ""}
               </p>
               <div className="grid grid-cols-3 gap-4">
-                {publicResults.map((recipe) => (
+                {publicRecipes.map((recipe) => (
                   <Link
                     key={recipe.id}
                     to={`/recipes/${recipe.id}`}
@@ -322,7 +198,7 @@ export default function SearchPage() {
             </div>
           )}
 
-          {!publicSearched && (
+          {!rSearched && (
             <div className="text-center py-12 text-gray-300 dark:text-gray-600">
               <p className="text-5xl mb-3">🌍</p>
               <p>Recherchez parmi les recettes partagées par la communauté</p>
@@ -332,26 +208,28 @@ export default function SearchPage() {
       )}
 
       {/* ===== Cookbooks publics ===== */}
-      {activeTab === "cookbooks-public" && (
+      {activeTab === "public-cookbooks" && (
         <div>
-          <form onSubmit={handleCbSearch} className="flex gap-3 mb-6">
-            <input
-              type="text"
-              value={cbQ}
-              onChange={(e) => setCbQ(e.target.value)}
-              placeholder="Rechercher un cookbook public..."
-              className="flex-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-            <button
-              type="submit"
-              disabled={cbLoading}
-              className="bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
-            >
-              {cbLoading ? "..." : "🔍 Rechercher"}
-            </button>
+          <form onSubmit={handleCookbookSearch} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-6">
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={cq}
+                onChange={(e) => setCq(e.target.value)}
+                placeholder="Rechercher un cookbook public..."
+                className="flex-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+              <button
+                type="submit"
+                disabled={cLoading}
+                className="bg-red-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
+              >
+                {cLoading ? "..." : "🔍 Rechercher"}
+              </button>
+            </div>
           </form>
 
-          {cbSearched && publicCookbooks.length === 0 && (
+          {cSearched && publicCookbooks.length === 0 && (
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
               <p className="text-gray-400">Aucun cookbook public trouvé</p>
             </div>
@@ -374,6 +252,7 @@ export default function SearchPage() {
                     </div>
                     <span className="text-xs bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-2 py-1 rounded-full">🌍 Public</span>
                   </div>
+
                   {cb.recipes.length === 0 ? (
                     <p className="text-sm text-gray-400">Aucune recette dans ce cookbook</p>
                   ) : (
@@ -388,7 +267,7 @@ export default function SearchPage() {
                             </p>
                           </div>
                           <button
-                            onClick={() => handleCopyRecipe(recipe.id)}
+                            onClick={() => handleCopy(recipe.id)}
                             disabled={copySuccess === recipe.id}
                             className={`text-xs px-3 py-1.5 rounded-lg flex-shrink-0 transition-colors ${
                               copySuccess === recipe.id
@@ -396,7 +275,7 @@ export default function SearchPage() {
                                 : "bg-red-600 text-white hover:bg-red-700"
                             }`}
                           >
-                            {copySuccess === recipe.id ? "✅ Copié" : "�� Copier"}
+                            {copySuccess === recipe.id ? "✅ Copié" : "📋 Copier"}
                           </button>
                         </div>
                       ))}
@@ -406,8 +285,7 @@ export default function SearchPage() {
               ))}
             </div>
           )}
-
-          {!cbSearched && (
+          {!cSearched && (
             <div className="text-center py-12 text-gray-300 dark:text-gray-600">
               <p className="text-5xl mb-3">📚</p>
               <p>Recherchez parmi les cookbooks partagés par la communauté</p>

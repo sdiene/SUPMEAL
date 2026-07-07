@@ -76,6 +76,7 @@ router.post("/", create);
  *       204:
  *         description: Cookbook supprimé
  */
+router.get("/public", listPublicCookbooks);
 router.get("/:id", getOne);
 router.delete("/:id", remove);
 
@@ -199,7 +200,6 @@ router.post("/:id/recipes", addRecipe);
  *       200:
  *         description: Liste des cookbooks publics
  */
-router.get("/public", listPublicCookbooks);
 
 /**
  * @swagger

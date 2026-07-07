@@ -1,16 +1,14 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
-
 const navItems = [
   { to: "/", label: "Dashboard", icon: "🏠" },
   { to: "/recipes", label: "Mes recettes", icon: "🍽️" },
   { to: "/favorites", label: "Favoris", icon: "⭐" },
   { to: "/cookbooks", label: "Cookbooks", icon: "📚" },
-  { to: "/search", label: "Rechercher", icon: "🔍" },
+  { to: "/search", label: "Découverte", icon: "🌍" },
   { to: "/settings", label: "Paramètres", icon: "⚙️" },
 ];
-
 export default function AppLayout({ children }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -25,12 +23,10 @@ export default function AppLayout({ children }) {
       localStorage.setItem("theme", "light");
     }
   }, [dark]);
-
   function handleLogout() {
     logout();
     navigate("/login");
   }
-
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       {/* Sidebar rouge */}
