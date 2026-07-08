@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getRecipe, deleteRecipe, toggleFavorite, togglePublic } from "../api/recipes";
+import { useAuth } from "../context/AuthContext";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export default function RecipeDetailPage() {
   const { id } = useParams();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -72,7 +74,7 @@ export default function RecipeDetailPage() {
           >
             {recipe.isFavorite ? "⭐" : "☆"}
           </button>
-          {recipe.userId && (
+          {recipe.userId && recipe.userId === user?.id && (
             <button
               onClick={handlePublicToggle}
               className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${
@@ -84,18 +86,18 @@ export default function RecipeDetailPage() {
               {recipe.isPublic ? "🌍 Publique" : "🔒 Privée"}
             </button>
           )}
-          <Link
+          {recipe.userId === user?.id && <Link
             to={`/recipes/${id}/edit`}
             className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
           >
             ✏️ Modifier
-          </Link>
-          <button
+          </Link>}
+          {recipe.userId === user?.id && <button
             onClick={handleDelete}
             className="text-sm bg-red-50 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors"
           >
             🗑️ Supprimer
-          </button>
+          </button>}
         </div>
       </div>
       {/* Méta */}

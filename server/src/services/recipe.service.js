@@ -62,15 +62,25 @@ export async function getUserRecipes(userId) {
 async function findAccessibleRecipe(userId, recipeId) {
   const recipe = await prisma.recipe.findUnique({
     where: { id: recipeId },
-    include: { ingredients: true, steps: true, tags: { include: { tag: true } } },
+    include: {
+      ingredients: true,
+      steps: true,
+      tags: { include: { tag: true } },
+      user: { select: { id: true, name: true } },
+    },
   });
   if (!recipe) throw new Error("NOT_FOUND");
+
+  if (recipe.isPublic) return recipe;
 
   if (recipe.userId && recipe.userId !== userId) throw new Error("NOT_FOUND");
 
   if (recipe.cookbookId) {
     const role = await getMemberRole(userId, recipe.cookbookId);
-    if (!role) throw new Error("NOT_FOUND");
+    if (!role) {
+      const cookbook = await prisma.cookbook.findUnique({ where: { id: recipe.cookbookId } });
+      if (!cookbook?.isPublic) throw new Error("NOT_FOUND");
+    }
   }
   return recipe;
 }
@@ -143,6 +153,6 @@ export async function togglePublic(userId, recipeId) {
   return prisma.recipe.update({
     where: { id: recipeId },
     data: { isPublic: !recipe.isPublic },
-  });
+  });   
 }
 

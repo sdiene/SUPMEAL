@@ -7,4 +7,3 @@ Application de gestion de recettes et planification de repas.
 - Client: React (Vite)
 - Déploiement: Docker Compose
 
-
