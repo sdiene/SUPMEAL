@@ -259,13 +259,16 @@ export default function SearchPage() {
                     <div className="grid grid-cols-2 gap-3">
                       {cb.recipes.map((recipe) => (
                         <div key={recipe.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg gap-3">
-                          <div className="flex-1 min-w-0">
+                          <Link
+                            to={`/recipes/${recipe.id}`}
+                            className="flex-1 min-w-0 hover:text-red-600 transition-colors"
+                          >
                             <p className="text-sm font-medium text-gray-800 dark:text-white truncate">{recipe.title}</p>
                             <p className="text-xs text-gray-400">
                               {recipe.prepTime ? `⏱ ${recipe.prepTime} min` : ""}
                               {recipe.cookTime ? ` · 🔥 ${recipe.cookTime} min` : ""}
                             </p>
-                          </div>
+                          </Link>
                           <button
                             onClick={() => handleCopy(recipe.id)}
                             disabled={copySuccess === recipe.id}
