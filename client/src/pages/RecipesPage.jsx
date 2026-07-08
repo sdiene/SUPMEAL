@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getRecipes, toggleFavorite } from "../api/recipes";
+import { useAllergyCheck } from "../hooks/useAllergyCheck";
 import { searchRecipes } from "../api/search";
 import { getCookbooks } from "../api/cookbooks";
 import RecipeCard from "../components/RecipeCard";
@@ -18,6 +19,8 @@ export default function RecipesPage() {
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [isFiltering, setIsFiltering] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [profileFilter, setProfileFilter] = useState(false);
+  const { checkIngredients, isDietCompatible } = useAllergyCheck();
   useEffect(() => {
     Promise.all([getRecipes(), getCookbooks()])
       .then(([recipesRes, cbRes]) => {
@@ -49,7 +52,14 @@ export default function RecipesPage() {
       if (maxCookTime) params.maxCookTime = maxCookTime;
       if (favoritesOnly) params.favoritesOnly = "true";
       const res = await searchRecipes(params);
-      setDisplayed(res.data.recipes);
+      let filtered = res.data.recipes;
+      if (profileFilter) {
+        filtered = filtered.filter((r) =>
+          checkIngredients(r.ingredients || []).length === 0 &&
+          isDietCompatible(r.tags || [])
+        );
+      }
+      setDisplayed(filtered);
     } catch (err) {
       console.error(err);
     } finally {
@@ -185,6 +195,16 @@ export default function RecipesPage() {
                   className="w-4 h-4 accent-red-600"
                 />
                 <label htmlFor="favOnly" className="text-sm text-gray-700 dark:text-gray-300">⭐ Favoris</label>
+              </div>
+              <div className="flex items-center gap-2 pt-5">
+                <input
+                  type="checkbox"
+                  id="profileFilter"
+                  checked={profileFilter}
+                  onChange={(e) => setProfileFilter(e.target.checked)}
+                  className="w-4 h-4 accent-red-600"
+                />
+                <label htmlFor="profileFilter" className="text-sm text-gray-700 dark:text-gray-300">🥗 Compatible mon profil</label>
               </div>
             </div>
             <div className="flex gap-2 pt-1">

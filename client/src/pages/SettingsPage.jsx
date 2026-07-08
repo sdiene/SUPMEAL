@@ -87,24 +87,48 @@ export default function SettingsPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Régime alimentaire</label>
-            <input
-              type="text"
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              🥗 Régime alimentaire
+              <span className="text-xs text-gray-400 font-normal ml-2">
+                (utilisé pour filtrer les recettes incompatibles)
+              </span>
+            </label>
+            <select
               value={diet}
               onChange={(e) => setDiet(e.target.value)}
-              placeholder="ex. végétarien, sans gluten..."
               className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
+            >
+              <option value="">Aucun régime spécifique</option>
+              <option value="végétarien">🌿 Végétarien</option>
+              <option value="vegan">🌱 Vegan</option>
+              <option value="sans gluten">🌾 Sans gluten</option>
+              <option value="halal">☪️ Halal</option>
+              <option value="kasher">✡️ Kasher</option>
+            </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Allergies</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              ⚠️ Allergies
+              <span className="text-xs text-gray-400 font-normal ml-2">
+                (séparées par virgules — des alertes apparaîtront sur les recettes concernées)
+              </span>
+            </label>
             <input
               type="text"
               value={allergies}
               onChange={(e) => setAllergies(e.target.value)}
-              placeholder="ex. arachides, lactose..."
+              placeholder="ex. arachides, lactose, gluten, noix..."
               className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
+            {allergies && (
+              <div className="flex gap-2 flex-wrap mt-2">
+                {allergies.split(",").map((a) => a.trim()).filter(Boolean).map((a) => (
+                  <span key={a} className="text-xs bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-1 rounded-full">
+                    ⚠️ {a}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Portions par défaut</label>

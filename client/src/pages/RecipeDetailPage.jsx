@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getRecipe, deleteRecipe, toggleFavorite, togglePublic } from "../api/recipes";
 import { useAuth } from "../context/AuthContext";
+import { useAllergyCheck } from "../hooks/useAllergyCheck";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export default function RecipeDetailPage() {
   const { id } = useParams();
   const { user } = useAuth();
+  const { checkIngredients, isDietCompatible } = useAllergyCheck();
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -116,6 +118,39 @@ export default function RecipeDetailPage() {
           ))}
         </div>
       )}
+      {/* Avertissements allergies/régime */}
+      {recipe.ingredients && (() => {
+        const conflicts = checkIngredients(recipe.ingredients);
+        const dietOk = isDietCompatible(recipe.tags || []);
+        if (!conflicts.length && dietOk) return null;
+        return (
+          <div className="mb-6 space-y-2">
+            {conflicts.length > 0 && (
+              <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <span className="text-lg">⚠️</span>
+                <div>
+                  <p className="text-sm font-medium text-red-700 dark:text-red-400">Allergènes détectés</p>
+                  <p className="text-xs text-red-600 dark:text-red-300 mt-0.5">
+                    Cette recette contient : {conflicts.map((i) => i.name).join(", ")}
+                  </p>
+                </div>
+              </div>
+            )}
+            {!dietOk && (
+              <div className="flex items-start gap-2 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+                <span className="text-lg">🥗</span>
+                <div>
+                  <p className="text-sm font-medium text-orange-700 dark:text-orange-400">Incompatible avec votre régime</p>
+                  <p className="text-xs text-orange-600 dark:text-orange-300 mt-0.5">
+                    Cette recette peut ne pas convenir à votre régime ({user?.diet})
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
       {recipe.source && (
         <p className="text-sm text-gray-400 mb-6">
           Source : <span className="text-blue-500">{recipe.source}</span>

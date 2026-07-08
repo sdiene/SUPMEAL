@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
+import { useAllergyCheck } from "../hooks/useAllergyCheck";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export default function RecipeCard({ recipe, onFavoriteToggle }) {
+  const { checkIngredients } = useAllergyCheck();
+  const conflicts = checkIngredients(recipe.ingredients || []);
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
       {recipe.imageUrl ? (
@@ -34,6 +37,11 @@ export default function RecipeCard({ recipe, onFavoriteToggle }) {
           </button>
         </div>
 
+        {conflicts.length > 0 && (
+          <span className="inline-flex items-center gap-1 text-xs bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full mt-1 mb-1">
+            ⚠️ Allergène
+          </span>
+        )}
         <p className="text-xs text-gray-400 dark:text-gray-400 mt-1">
           {recipe.prepTime ? `⏱ ${recipe.prepTime} min` : ""}
           {recipe.cookTime ? ` · 🔥 ${recipe.cookTime} min` : ""}
