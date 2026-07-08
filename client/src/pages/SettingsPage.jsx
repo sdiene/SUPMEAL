@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { importRecipes } from "../api/recipes";
 export default function SettingsPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -19,6 +20,11 @@ export default function SettingsPage() {
   const [pwLoading, setPwLoading] = useState(false);
   const [deleteError, setDeleteError] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
+  const [importSuccess, setImportSuccess] = useState("");
+  const [importError, setImportError] = useState("");
+  const fileRef = useRef(null);
+
   async function handleProfileUpdate(e) {
     e.preventDefault();
     setProfileLoading(true);
@@ -33,6 +39,7 @@ export default function SettingsPage() {
       setProfileLoading(false);
     }
   }
+
   async function handlePasswordChange(e) {
     e.preventDefault();
     setPwLoading(true);
@@ -49,6 +56,36 @@ export default function SettingsPage() {
       setPwLoading(false);
     }
   }
+
+  async function handleImport(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setImportLoading(true);
+    setImportError("");
+    setImportSuccess("");
+
+    try {
+      const text = await file.text();
+      const isCSV = file.name.endsWith(".csv");
+
+      let result;
+      if (isCSV) {
+        result = await importRecipes("csv", text);
+      } else {
+        const json = JSON.parse(text);
+        result = await importRecipes("json", json);
+      }
+
+      setImportSuccess(`✅ ${result.data.imported} recette(s) importée(s) avec succès !`);
+    } catch (err) {
+      setImportError(err.response?.data?.error || "Fichier invalide ou erreur serveur");
+    } finally {
+      setImportLoading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
   async function handleDeleteAccount() {
     const confirmed = window.confirm(
       "Êtes-vous sûr de vouloir supprimer votre compte ?\n\nCette action est irréversible. Toutes vos recettes et données seront définitivement supprimées."
@@ -67,6 +104,7 @@ export default function SettingsPage() {
       setDeleteLoading(false);
     }
   }
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Paramètres</h1>
@@ -188,6 +226,98 @@ export default function SettingsPage() {
           </form>
         </div>
       )}
+
+      {/* Import / Export */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-1">📦 Import / Export</h2>
+        <p className="text-xs text-gray-400 mb-4">
+          Exportez vos recettes en JSON ou CSV. Importez des recettes depuis un fichier compatible.
+        </p>
+
+        {/* Export */}
+        <div className="mb-6">
+          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Exporter mes recettes</h3>
+          <div className="flex gap-3">
+            <a
+              href={`${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api/export?format=json`}
+              onClick={(e) => {
+                e.preventDefault();
+                if (!window.confirm("Vos données seront exportées en clair (lisibles). Continuer ?")) return;
+                const token = localStorage.getItem("token");
+                fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api/export?format=json`, {
+                  headers: { Authorization: `Bearer ${token}` }
+                })
+                .then(r => r.blob())
+                .then(blob => {
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = "supmeal-recipes.json";
+                  a.click();
+                  URL.revokeObjectURL(url);
+                });
+              }}
+              className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+            >
+              ⬇️ Export JSON
+            </a>
+            
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                if (!window.confirm("Vos données seront exportées en clair (lisibles). Continuer ?")) return;
+                const token = localStorage.getItem("token");
+                fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api/export?format=csv`, {
+                  headers: { Authorization: `Bearer ${token}` }
+                })
+                .then(r => r.blob())
+                .then(blob => {
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = "supmeal-recipes.csv";
+                  a.click();
+                  URL.revokeObjectURL(url);
+                });
+              }}
+              className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+            >
+              ⬇️ Export CSV
+            </a>
+          </div>
+        </div>
+
+        {/* Import */}
+        <div>
+          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Importer des recettes</h3>
+          <p className="text-xs text-gray-400 mb-3">Formats acceptés : JSON ou CSV (compatibles SUPMEAL)</p>
+
+          {importSuccess && <p className="text-green-600 text-sm mb-3">{importSuccess}</p>}
+          {importError && <p className="text-red-500 text-sm mb-3">{importError}</p>}
+
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".json,.csv"
+              onChange={handleImport}
+              disabled={importLoading}
+              className="hidden"
+            />
+            <span className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              importLoading
+                ? "bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
+                : "bg-red-600 text-white hover:bg-red-700 cursor-pointer"
+            }`}>
+              {importLoading ? "Import en cours..." : "⬆️ Importer un fichier"}
+            </span>
+            <span className="text-xs text-gray-400">
+              Les recettes importées seront ajoutées à vos recettes personnelles
+            </span>
+          </label>
+        </div>
+      </div>
 
       {/* Danger zone */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-red-200 dark:border-red-900 p-6">
