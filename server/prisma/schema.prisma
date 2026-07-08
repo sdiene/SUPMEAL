@@ -25,6 +25,8 @@ model User {
   emailVerified      Boolean   @default(false)
   verifyToken        String?
   verifyTokenExpiry  DateTime?
+  resetToken         String?
+  resetTokenExpiry   DateTime?
   createdAt          DateTime  @default(now())
   recipes         Recipe[]
   cookbookMembers CookbookMember[]

@@ -16,6 +16,8 @@ import SettingsPage from "./pages/SettingsPage";
 import SearchPage from "./pages/SearchPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import EmailVerifiedPage from "./pages/EmailVerifiedPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 function ProtectedLayout({ children }) {
   return (
@@ -34,6 +36,8 @@ export default function App() {
           <Route path="/oauth-callback" element={<OAuthCallbackPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/email-verified" element={<EmailVerifiedPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/" element={<ProtectedLayout><DashboardPage /></ProtectedLayout>} />
           <Route path="/recipes" element={<ProtectedLayout><RecipesPage /></ProtectedLayout>} />
@@ -42,6 +46,8 @@ export default function App() {
           <Route path="/recipes/:id/edit" element={<ProtectedLayout><EditRecipePage /></ProtectedLayout>} />
           <Route path="/cookbooks" element={<ProtectedLayout><CookbooksPage /></ProtectedLayout>} />
           <Route path="/email-verified" element={<EmailVerifiedPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/cookbooks/:id" element={<ProtectedLayout><CookbookDetailPage /></ProtectedLayout>} />
           <Route path="/settings" element={<ProtectedLayout><SettingsPage /></ProtectedLayout>} />
           <Route path="/search" element={<ProtectedLayout><SearchPage /></ProtectedLayout>} />

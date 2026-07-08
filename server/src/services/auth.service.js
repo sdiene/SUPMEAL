@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { prisma } from "../lib/prisma.js";
-import { sendVerificationEmail } from "../lib/mailer.js";
+import { sendVerificationEmail, sendPasswordResetEmail } from "../lib/mailer.js";
 const SALT_ROUNDS = 10;
 export async function registerUser({ email, password, name }) {
   const existing = await prisma.user.findUnique({ where: { email } });
@@ -64,4 +64,42 @@ export function generateToken(user) {
 export function sanitizeUser(user) {
   const { password, verifyToken, verifyTokenExpiry, ...safe } = user;
   return safe;
+}
+
+export async function requestPasswordReset(email) {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) throw new Error("USER_NOT_FOUND");
+  if (!user.password) throw new Error("OAUTH_ONLY_ACCOUNT");
+
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1h
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { resetToken, resetTokenExpiry },
+  });
+
+  await sendPasswordResetEmail(email, resetToken);
+}
+
+export async function resetPassword(token, newPassword) {
+  const user = await prisma.user.findFirst({
+    where: {
+      resetToken: token,
+      resetTokenExpiry: { gt: new Date() },
+    },
+  });
+
+  if (!user) throw new Error("INVALID_OR_EXPIRED_TOKEN");
+
+  const hashed = await bcrypt.hash(newPassword, 10);
+
+  return prisma.user.update({
+    where: { id: user.id },
+    data: {
+      password: hashed,
+      resetToken: null,
+      resetTokenExpiry: null,
+    },
+  });
 }

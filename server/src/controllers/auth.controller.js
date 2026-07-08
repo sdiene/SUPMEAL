@@ -4,6 +4,8 @@ import {
   verifyEmail,
   generateToken,
   sanitizeUser,
+  requestPasswordReset,
+  resetPassword,
 } from "../services/auth.service.js";
 
 export async function register(req, res) {
@@ -57,4 +59,39 @@ export async function verifyEmailHandler(req, res) {
 
 export async function me(req, res) {
   res.json({ user: req.user });
+}
+
+export async function forgotPassword(req, res) {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "Email requis" });
+
+    await requestPasswordReset(email);
+    res.json({ message: "Un email de réinitialisation a été envoyé si ce compte existe." });
+  } catch (err) {
+    if (err.message === "OAUTH_ONLY_ACCOUNT") {
+      return res.status(400).json({ error: "Ce compte utilise une connexion Google, pas de mot de passe à réinitialiser." });
+    }
+    res.json({ message: "Un email de réinitialisation a été envoyé si ce compte existe." });
+  }
+}
+
+export async function resetPasswordHandler(req, res) {
+  try {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword) {
+      return res.status(400).json({ error: "Token et nouveau mot de passe requis" });
+    }
+    if (newPassword.length < 8) {
+      return res.status(400).json({ error: "Le mot de passe doit faire au moins 8 caractères" });
+    }
+
+    await resetPassword(token, newPassword);
+    res.json({ message: "Mot de passe réinitialisé avec succès" });
+  } catch (err) {
+    if (err.message === "INVALID_OR_EXPIRED_TOKEN") {
+      return res.status(400).json({ error: "Lien invalide ou expiré (1h)" });
+    }
+    res.status(500).json({ error: "Erreur serveur" });
+  }
 }

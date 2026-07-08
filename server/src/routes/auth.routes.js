@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { register, login, me, verifyEmailHandler } from "../controllers/auth.controller.js";
+import { register, login, me, verifyEmailHandler, forgotPassword, resetPasswordHandler } from "../controllers/auth.controller.js";
 import { requireAuth } from "../middlewares/auth.middleware.js";
 const router = Router();
 /**
@@ -87,4 +87,47 @@ router.get("/me", requireAuth, me);
  *         description: Redirection vers le frontend après vérification
  */
 router.get("/verify-email", verifyEmailHandler);
+
+/**
+ * @swagger
+ * /api/auth/forgot-password:
+ *   post:
+ *     summary: Demander une réinitialisation de mot de passe
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email: { type: string }
+ *     responses:
+ *       200:
+ *         description: Email envoyé si le compte existe
+ */
+router.post("/forgot-password", forgotPassword);
+
+/**
+ * @swagger
+ * /api/auth/reset-password:
+ *   post:
+ *     summary: Réinitialiser le mot de passe avec un token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [token, newPassword]
+ *             properties:
+ *               token: { type: string }
+ *               newPassword: { type: string }
+ *     responses:
+ *       200:
+ *         description: Mot de passe réinitialisé
+ */
+router.post("/reset-password", resetPasswordHandler);
 export default router;
