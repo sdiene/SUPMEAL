@@ -15,6 +15,7 @@ import CookbookDetailPage from "./pages/CookbookDetailPage";
 import SettingsPage from "./pages/SettingsPage";
 import SearchPage from "./pages/SearchPage";
 import FavoritesPage from "./pages/FavoritesPage";
+import InvitationsPage from "./pages/InvitationsPage";
 import EmailVerifiedPage from "./pages/EmailVerifiedPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
@@ -52,6 +53,7 @@ export default function App() {
           <Route path="/settings" element={<ProtectedLayout><SettingsPage /></ProtectedLayout>} />
           <Route path="/search" element={<ProtectedLayout><SearchPage /></ProtectedLayout>} />
           <Route path="/favorites" element={<ProtectedLayout><FavoritesPage /></ProtectedLayout>} />
+          <Route path="/invitations" element={<ProtectedLayout><InvitationsPage /></ProtectedLayout>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

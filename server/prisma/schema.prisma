@@ -32,7 +32,10 @@ model User {
   cookbookMembers CookbookMember[]
   comments        Comment[]
   messages        Message[]
-  mealPlans       MealPlan[]
+  mealPlans           MealPlan[]
+  sentInvitations     CookbookInvitation[] @relation("InvitedBy")
+  receivedInvitations CookbookInvitation[] @relation("InvitedUser")
+
   @@unique([oauthProvider, oauthId])
 }
 model Cookbook {
@@ -41,9 +44,10 @@ model Cookbook {
   description String?
   isPublic    Boolean  @default(false)
   createdAt   DateTime @default(now())
-  members  CookbookMember[]
-  recipes  Recipe[]
-  messages Message[]
+  members     CookbookMember[]
+  recipes     Recipe[]
+  messages    Message[]
+  invitations CookbookInvitation[]
 }
 model CookbookMember {
   id         String   @id @default(uuid())
@@ -131,4 +135,26 @@ model Message {
 
   cookbook Cookbook @relation(fields: [cookbookId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REFUSED
+}
+
+model CookbookInvitation {
+  id            String           @id @default(uuid())
+  cookbookId    String
+  invitedById   String
+  invitedUserId String
+  role          Role             @default(READER)
+  status        InvitationStatus @default(PENDING)
+  createdAt     DateTime         @default(now())
+
+  cookbook      Cookbook @relation(fields: [cookbookId], references: [id], onDelete: Cascade)
+  invitedBy     User     @relation("InvitedBy", fields: [invitedById], references: [id], onDelete: Cascade)
+  invitedUser   User     @relation("InvitedUser", fields: [invitedUserId], references: [id], onDelete: Cascade)
+
+  @@unique([cookbookId, invitedUserId])
 }

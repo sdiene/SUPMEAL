@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   getCookbook,
   deleteCookbook,
-  inviteMember,
   updateMemberRole,
   removeMember,
   getMessages,
@@ -12,6 +11,7 @@ import {
   addRecipeToCookbook,
   toggleCookbookPublic,
 } from "../api/cookbooks";
+import { sendInvitation } from "../api/invitations";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/client";
 import RecipeCard from "../components/RecipeCard";
@@ -82,12 +82,10 @@ export default function CookbookDetailPage() {
     setInviting(true);
     setInviteError("");
     try {
-      const res = await inviteMember(id, inviteEmail, inviteRole);
-      setCookbook((prev) => ({
-        ...prev,
-        members: [...prev.members, res.data.member],
-      }));
+      await sendInvitation(id, inviteEmail, inviteRole);
       setInviteEmail("");
+      setInviteError("");
+      alert(`Invitation envoyée à ${inviteEmail} ! Il devra l'accepter depuis son onglet Invitations.`);
     } catch (err) {
       setInviteError(err.response?.data?.error || "Erreur");
     } finally {

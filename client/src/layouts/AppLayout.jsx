@@ -1,18 +1,13 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
-const navItems = [
-  { to: "/", label: "Dashboard", icon: "🏠" },
-  { to: "/recipes", label: "Mes recettes", icon: "🍽️" },
-  { to: "/favorites", label: "Favoris", icon: "⭐" },
-  { to: "/cookbooks", label: "Cookbooks", icon: "📚" },
-  { to: "/search", label: "Découverte", icon: "🌍" },
-  { to: "/settings", label: "Paramètres", icon: "⚙️" },
-];
+import { getPendingCount } from "../api/invitations";
+
 export default function AppLayout({ children }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [dark, setDark] = useState(() => localStorage.getItem("theme") === "dark");
+  const [invitationCount, setInvitationCount] = useState(0);
 
   useEffect(() => {
     if (dark) {
@@ -23,13 +18,35 @@ export default function AppLayout({ children }) {
       localStorage.setItem("theme", "light");
     }
   }, [dark]);
+
+  useEffect(() => {
+    function fetchCount() {
+      getPendingCount()
+        .then((res) => setInvitationCount(res.data.count))
+        .catch(() => {});
+    }
+    fetchCount();
+    const interval = setInterval(fetchCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
   function handleLogout() {
     logout();
     navigate("/login");
   }
+
+  const navItems = [
+    { to: "/", label: "Dashboard", icon: "🏠" },
+    { to: "/recipes", label: "Mes recettes", icon: "🍽️" },
+    { to: "/favorites", label: "Favoris", icon: "⭐" },
+    { to: "/cookbooks", label: "Cookbooks", icon: "📚" },
+    { to: "/invitations", label: "Invitations", icon: "🔔", badge: invitationCount },
+    { to: "/search", label: "Découverte", icon: "🌍" },
+    { to: "/settings", label: "Paramètres", icon: "⚙️" },
+  ];
+
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Sidebar rouge */}
       <aside className="w-64 bg-red-600 flex flex-col fixed h-full">
         <div className="p-6 border-b border-red-500">
           <h1 className="text-xl font-bold text-white">🍴 SUPMEAL</h1>
@@ -51,7 +68,12 @@ export default function AppLayout({ children }) {
               }
             >
               <span>{item.icon}</span>
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {item.badge > 0 && (
+                <span className="bg-white text-red-600 text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
+                  {item.badge}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>

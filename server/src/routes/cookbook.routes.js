@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware.js";
 import messageRoutes from "./message.routes.js";
+import cookbookInvitationRoutes from "./cookbookInvitation.routes.js";
 import {
   create,
   list,
@@ -240,5 +241,6 @@ router.patch("/:id/public", togglePublic);
  *         description: Recette copiée
  */
 router.post("/copy-recipe", copyRecipe);
+router.use("/:id/invite", cookbookInvitationRoutes);
 router.use("/:cookbookId/messages", messageRoutes);
 export default router;
