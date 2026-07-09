@@ -26,6 +26,23 @@ export default function RecipeDetailPage() {
       console.error(err);
     }
   }
+  function handleExport(format) {
+    const token = localStorage.getItem("token");
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+    fetch(`${API_URL}/api/export?format=${format}&recipeIds=${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then(r => r.blob())
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${recipe.title}.${format}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
   async function handlePublicToggle() {
     try {
       const res = await togglePublic(id);
@@ -76,6 +93,27 @@ export default function RecipeDetailPage() {
           >
             {recipe.isFavorite ? "⭐" : "☆"}
           </button>
+          {/* Export */}
+          <div className="relative group">
+            <button className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+              ⬇️ Exporter
+            </button>
+            <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden z-10 hidden group-hover:block w-32">
+              <button
+                onClick={() => handleExport("json")}
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                JSON
+              </button>
+              <button
+                onClick={() => handleExport("csv")}
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                CSV
+              </button>
+            </div>
+          </div>
+
           {recipe.userId && recipe.userId === user?.id && (
             <button
               onClick={handlePublicToggle}
