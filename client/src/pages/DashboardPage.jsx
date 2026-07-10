@@ -1,22 +1,26 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import apiClient from "../api/client";
+import { getFeed } from "../api/profiles";
 import { useAuth } from "../context/AuthContext";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export default function DashboardPage() {
   const { user } = useAuth();
   const [recipes, setRecipes] = useState([]);
   const [cookbooks, setCookbooks] = useState([]);
+  const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     async function fetchData() {
       try {
-        const [recipesRes, cookbooksRes] = await Promise.all([
+        const [recipesRes, cookbooksRes, feedRes] = await Promise.all([
           apiClient.get("/api/recipes"),
           apiClient.get("/api/cookbooks"),
+          getFeed(),
         ]);
         setRecipes(recipesRes.data.recipes);
         setCookbooks(cookbooksRes.data.cookbooks);
+        setFeed(feedRes.data.recipes);
       } catch (err) {
         console.error(err);
       } finally {
@@ -99,6 +103,46 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+      {/* Fil d'actualité */}
+      {feed.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+              📡 Fil d'actualité
+            </h2>
+            <Link to="/search" className="text-sm text-red-600 hover:underline">Découvrir des cuisiniers →</Link>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {feed.slice(0, 4).map((recipe) => (
+              <Link
+                key={recipe.id}
+                to={`/recipes/${recipe.id}`}
+                className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
+              >
+                {recipe.imageUrl ? (
+                  <img src={API_URL + recipe.imageUrl} alt={recipe.title} className="w-full h-32 object-cover" />
+                ) : (
+                  <div className="w-full h-32 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-3xl">🍽️</div>
+                )}
+                <div className="p-3">
+                  <h3 className="font-semibold text-gray-800 dark:text-white text-sm">{recipe.title}</h3>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Par{" "}
+                    <Link
+                      to={`/profile/${recipe.user?.id}`}
+                      className="text-red-600 hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {recipe.user?.name}
+                    </Link>
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Cookbooks — cliquables */}
       <div>
         <div className="flex items-center justify-between mb-4">

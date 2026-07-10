@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { getPublicRecipes, toggleFavorite } from "../api/recipes";
+import { searchProfiles } from "../api/profiles";
 import { getPublicCookbooks, copyRecipeToMyRecipes } from "../api/cookbooks";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export default function SearchPage() {
   const [activeTab, setActiveTab] = useState("public-recipes");
+  const [chefQ, setChefQ] = useState("");
+  const [chefs, setChefs] = useState([]);
+  const [chefsLoading, setChefsLoading] = useState(false);
+  const [chefsSearched, setChefsSearched] = useState(false);
   const [rq, setRq] = useState("");
   const [rtags, setRtags] = useState("");
   const [ringredient, setRingredient] = useState("");
@@ -37,6 +42,20 @@ export default function SearchPage() {
       setRLoading(false);
     }
   }
+  async function handleChefsSearch(e) {
+    e?.preventDefault();
+    setChefsLoading(true);
+    setChefsSearched(true);
+    try {
+      const res = await searchProfiles(chefQ);
+      setChefs(res.data.profiles);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setChefsLoading(false);
+    }
+  }
+
   async function handleCookbookSearch(e) {
     e?.preventDefault();
     setCLoading(true);
@@ -75,6 +94,7 @@ export default function SearchPage() {
         {[
           { id: "public-recipes", label: "��️ Recettes publiques" },
           { id: "public-cookbooks", label: "📚 Cookbooks publics" },
+          { id: "chefs", label: "👨‍🍳 Cuisiniers" },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -202,6 +222,65 @@ export default function SearchPage() {
             <div className="text-center py-12 text-gray-300 dark:text-gray-600">
               <p className="text-5xl mb-3">🌍</p>
               <p>Recherchez parmi les recettes partagées par la communauté</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ===== Cuisiniers ===== */}
+      {activeTab === "chefs" && (
+        <div>
+          <form onSubmit={handleChefsSearch} className="flex gap-3 mb-6">
+            <input
+              type="text"
+              value={chefQ}
+              onChange={(e) => setChefQ(e.target.value)}
+              placeholder="Rechercher un cuisinier par nom..."
+              className="flex-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            <button
+              type="submit"
+              disabled={chefsLoading}
+              className="bg-red-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
+            >
+              {chefsLoading ? "..." : "🔍 Rechercher"}
+            </button>
+          </form>
+
+          {chefsSearched && chefs.length === 0 && (
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
+              <p className="text-gray-400">Aucun cuisinier trouvé</p>
+            </div>
+          )}
+
+          {chefs.length > 0 && (
+            <div className="grid grid-cols-2 gap-4">
+              {chefs.map((chef) => (
+                <Link
+                  key={chef.id}
+                  to={`/profile/${chef.id}`}
+                  className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md transition-shadow flex items-center gap-4"
+                >
+                  <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400 font-bold text-xl flex-shrink-0">
+                    {chef.name?.[0]?.toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-800 dark:text-white">{chef.name}</h3>
+                    <div className="flex gap-3 text-xs text-gray-400 mt-1">
+                      <span>🍽️ {chef._count.recipes} recettes</span>
+                      <span>👥 {chef._count.followers} abonnés</span>
+                    </div>
+                  </div>
+                  <span className="text-red-600 dark:text-red-400 text-sm">→</span>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {!chefsSearched && (
+            <div className="text-center py-12 text-gray-300 dark:text-gray-600">
+              <p className="text-5xl mb-3">👨‍🍳</p>
+              <p>Recherchez des cuisiniers par nom pour découvrir leurs recettes</p>
             </div>
           )}
         </div>

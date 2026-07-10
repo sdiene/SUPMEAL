@@ -35,6 +35,8 @@ model User {
   mealPlans           MealPlan[]
   sentInvitations     CookbookInvitation[] @relation("InvitedBy")
   receivedInvitations CookbookInvitation[] @relation("InvitedUser")
+  following           Follow[] @relation("Follower")
+  followers           Follow[] @relation("Following")
 
   @@unique([oauthProvider, oauthId])
 }
@@ -157,4 +159,16 @@ model CookbookInvitation {
   invitedUser   User     @relation("InvitedUser", fields: [invitedUserId], references: [id], onDelete: Cascade)
 
   @@unique([cookbookId, invitedUserId])
+}
+
+model Follow {
+  id          String   @id @default(uuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower    User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
 }

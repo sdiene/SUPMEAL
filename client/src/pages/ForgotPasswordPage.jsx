@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import apiClient from "../api/client";
-
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
@@ -21,12 +19,11 @@ export default function ForgotPasswordPage() {
       setLoading(false);
     }
   }
-
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md text-center">
-          <p className="text-4xl mb-4">📧</p>
+          <p className="text-4xl mb-4">📧</p  >
           <h1 className="text-xl font-bold text-gray-800 mb-2">Email envoyé !</h1>
           <p className="text-gray-500 mb-6">
             Si un compte existe avec l'adresse <strong>{email}</strong>, vous recevrez un email avec un lien de réinitialisation valable 1h.
@@ -38,7 +35,6 @@ export default function ForgotPasswordPage() {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
