@@ -6,6 +6,7 @@ import RecipeCard from "../components/RecipeCard";
 export default function FavoritesPage() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     searchRecipes({ favoritesOnly: "true" })
@@ -32,9 +33,18 @@ export default function FavoritesPage() {
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">
         ⭐ Mes favoris
       </h1>
-      <p className="text-gray-400 text-sm mb-6">
-        {recipes.length} recette{recipes.length > 1 ? "s" : ""} en favori
-      </p>
+      <div className="flex items-center justify-between mb-6">
+        <p className="text-gray-400 text-sm">
+          {recipes.filter((r) => r.title.toLowerCase().includes(q.toLowerCase())).length} recette{recipes.length > 1 ? "s" : ""} en favori
+        </p>
+        <input
+          type="text"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Rechercher dans mes favoris..."
+          className="border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 w-72"
+        />
+      </div>
 
       {recipes.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
@@ -46,7 +56,7 @@ export default function FavoritesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-3 gap-4">
-          {recipes.map((recipe) => (
+          {recipes.filter((r) => r.title.toLowerCase().includes(q.toLowerCase())).map((recipe) => (
             <RecipeCard
               key={recipe.id}
               recipe={recipe}
