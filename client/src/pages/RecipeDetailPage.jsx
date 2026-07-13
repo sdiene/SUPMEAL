@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getRecipe, deleteRecipe, toggleFavorite, togglePublic } from "../api/recipes";
 import { addToMealPlan } from "../api/mealplan";
+import CommentsSection from "../components/CommentsSection";
 import { useAuth } from "../context/AuthContext";
 import { useAllergyCheck } from "../hooks/useAllergyCheck";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -247,6 +248,7 @@ export default function RecipeDetailPage() {
           </ol>
         </div>
       )}
+      <CommentsSection recipeId={id} />
     </div>
   );
 }
