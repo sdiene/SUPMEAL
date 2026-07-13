@@ -39,6 +39,7 @@ export default function AppLayout({ children }) {
     { to: "/", label: "Dashboard", icon: "🏠" },
     { to: "/recipes", label: "Mes recettes", icon: "🍽️" },
     { to: "/favorites", label: "Favoris", icon: "⭐" },
+    { to: "/mealplan", label: "Planning", icon: "📅" },
     { to: "/cookbooks", label: "Cookbooks", icon: "📚" },
     { to: "/invitations", label: "Invitations", icon: "🔔", badge: invitationCount },
     { to: "/search", label: "Découverte", icon: "🌍" },

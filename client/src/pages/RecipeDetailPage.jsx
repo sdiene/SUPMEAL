@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getRecipe, deleteRecipe, toggleFavorite, togglePublic } from "../api/recipes";
+import { addToMealPlan } from "../api/mealplan";
 import { useAuth } from "../context/AuthContext";
 import { useAllergyCheck } from "../hooks/useAllergyCheck";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -93,6 +94,19 @@ export default function RecipeDetailPage() {
           >
             {recipe.isFavorite ? "⭐" : "☆"}
           </button>
+          {/* Ajouter au planning */}
+          <button
+            onClick={handleAddToPlan}
+            disabled={addingToPlan}
+            className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${
+              planSuccess
+                ? "bg-green-50 text-green-600"
+                : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+            } disabled:opacity-50`}
+          >
+            {planSuccess ? "✅ Ajouté !" : addingToPlan ? "..." : "📅 Planning"}
+          </button>
+
           {/* Export */}
           <div className="relative group">
             <button className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
