@@ -127,14 +127,7 @@ export default function DashboardPage() {
                 <div className="p-3">
                   <h3 className="font-semibold text-gray-800 dark:text-white text-sm">{recipe.title}</h3>
                   <p className="text-xs text-gray-400 mt-1">
-                    Par{" "}
-                    <Link
-                      to={`/profile/${recipe.user?.id}`}
-                      className="text-red-600 hover:underline"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {recipe.user?.name}
-                    </Link>
+                    Par <span className="text-red-600">{recipe.user?.name}</span>
                   </p>
                 </div>
               </Link>

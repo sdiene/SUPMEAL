@@ -62,6 +62,23 @@ export default function RecipeDetailPage() {
       console.error(err);
     }
   }
+
+  const [addingToPlan, setAddingToPlan] = useState(false);
+  const [planSuccess, setPlanSuccess] = useState(false);
+
+  async function handleAddToPlan() {
+    setAddingToPlan(true);
+    try {
+      const today = new Date().toISOString().split("T")[0];
+      await addToMealPlan(id, today, "DINNER");
+      setPlanSuccess(true);
+      setTimeout(() => setPlanSuccess(false), 2000);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setAddingToPlan(false);
+    }
+  }
   if (loading) return <p className="text-gray-400">Chargement...</p>;
   if (!recipe) return null;
   return (
