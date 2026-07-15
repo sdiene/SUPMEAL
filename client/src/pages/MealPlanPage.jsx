@@ -141,12 +141,12 @@ export default function MealPlanPage() {
         <p className="text-gray-400">Chargement...</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
+          <table className="w-full border-collapse border border-gray-200 dark:border-gray-700">
             <thead>
               <tr>
-                <th className="w-32 p-2"></th>
+                <th className="w-32 p-2 border border-gray-200 dark:border-gray-700"></th>
                 {DAYS.map((day, i) => (
-                  <th key={day} className="p-2 text-center">
+                  <th key={day} className="p-2 text-center border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                     <div className="font-semibold text-gray-700 dark:text-gray-300 text-sm">{day}</div>
                     <div className="text-xs text-gray-400">
                       {addDays(weekStart, i).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}
@@ -157,15 +157,15 @@ export default function MealPlanPage() {
             </thead>
             <tbody>
               {MEAL_TYPES.map((meal) => (
-                <tr key={meal.value} className="border-t border-gray-100 dark:border-gray-700">
-                  <td className="p-2 text-xs font-medium text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                <tr key={meal.value} className="border-t border-gray-200 dark:border-gray-700">
+                  <td className="p-2 text-xs font-medium text-gray-500 dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                     {meal.label}
                   </td>
                   {DAYS.map((day, dayIndex) => {
                     const date = formatDate(addDays(weekStart, dayIndex));
                     const slotPlans = getPlanForSlot(dayIndex, meal.value);
                     return (
-                      <td key={day} className="p-1 align-top min-w-[120px]">
+                      <td key={day} className="p-1 align-top min-w-[120px] border border-gray-200 dark:border-gray-700">
                         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-1 min-h-[80px]">
                           {slotPlans.map((plan) => (
                             <div

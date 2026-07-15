@@ -42,6 +42,7 @@ export default function AppLayout({ children }) {
     { to: "/mealplan", label: "Planning", icon: "📅" },
     { to: "/cookbooks", label: "Cookbooks", icon: "📚" },
     { to: "/invitations", label: "Invitations", icon: "🔔", badge: invitationCount },
+    { to: "/feed", label: "Fil d'actualité", icon: "📡" },
     { to: "/search", label: "Découverte", icon: "🌍" },
     { to: "/settings", label: "Paramètres", icon: "⚙️" },
   ];
@@ -89,15 +90,18 @@ export default function AppLayout({ children }) {
         </div>
 
         <div className="p-4 border-t border-red-500">
-          <div className="flex items-center gap-3 mb-3">
+          <NavLink
+            to={`/profile/${user?.id}`}
+            className="flex items-center gap-3 mb-3 hover:bg-red-500 rounded-lg p-1 transition-colors"
+          >
             <div className="w-8 h-8 rounded-full bg-red-400 flex items-center justify-center text-white font-bold text-sm">
               {user?.name?.[0]?.toUpperCase() || "?"}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white truncate">{user?.name}</p>
-              <p className="text-xs text-red-200 truncate">{user?.email}</p>
+              <p className="text-xs text-red-200 truncate">👤 Mon profil</p>
             </div>
-          </div>
+          </NavLink>
           <button
             onClick={handleLogout}
             className="w-full text-sm text-red-100 hover:text-white hover:bg-red-500 py-2 px-3 rounded-lg transition-colors text-left"

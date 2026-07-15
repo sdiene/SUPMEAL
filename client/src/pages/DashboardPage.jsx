@@ -103,17 +103,19 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
-      {/* Fil d'actualité */}
+      {/* Fil d'actualité — aperçu */}
       {feed.length > 0 && (
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
               📡 Fil d'actualité
             </h2>
-            <Link to="/search" className="text-sm text-red-600 hover:underline">Découvrir des cuisiniers →</Link>
+            <Link to="/feed" className="text-sm text-red-600 hover:underline">
+              Voir tout ({feed.length}) →
+            </Link>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            {feed.slice(0, 4).map((recipe) => (
+            {feed.slice(0, 2).map((recipe) => (
               <Link
                 key={recipe.id}
                 to={`/recipes/${recipe.id}`}
