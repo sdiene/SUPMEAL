@@ -55,6 +55,7 @@ services:
     volumes:
       - ./client:/app
       - /app/node_modules
+
 volumes:
   db_data:
   uploads_data:
