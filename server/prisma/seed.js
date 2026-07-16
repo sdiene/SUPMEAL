@@ -15,6 +15,7 @@ async function main() {
       password: hashedPassword,
       diet: 'Omnivore',
       defaultPortions: 4,
+      emailVerified: true,
     },
   });
   const commis = await prisma.user.upsert({
@@ -26,6 +27,7 @@ async function main() {
       password: hashedPassword,
       diet: 'Omnivore',
       defaultPortions: 2,
+      emailVerified: true,
     },
   });
   console.log('📚 Création du livre de recettes partagé...');

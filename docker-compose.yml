@@ -41,7 +41,7 @@ services:
       - ./server:/app
       - uploads_data:/app/uploads
       - /app/node_modules
-    command: sh -c "npx prisma migrate deploy && npx prisma db seed && npm run dev"
+    command: sh -c "npx prisma migrate dev --name auto || true && npx prisma db seed && npm run dev"
 
   client:
     build: ./client
