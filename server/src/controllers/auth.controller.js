@@ -14,10 +14,22 @@ export async function register(req, res) {
     if (!email || !password || !name) {
       return res.status(400).json({ error: "Champs manquants" });
     }
-    await registerUser({ email, password, name });
-    res.status(201).json({
-      message: "Compte créé ! Vérifiez votre email pour activer votre compte.",
-    });
+    const { user, emailSent } = await registerUser({ email, password, name });
+
+    if (emailSent) {
+      res.status(201).json({
+        message: "Compte créé ! Vérifiez votre email pour activer votre compte.",
+        emailVerificationRequired: true,
+      });
+    } else {
+      const token = generateToken(user);
+      res.status(201).json({
+        message: "Compte créé avec succès !",
+        emailVerificationRequired: false,
+        token,
+        user: sanitizeUser(user),
+      });
+    }
   } catch (err) {
     if (err.message === "EMAIL_TAKEN") {
       return res.status(409).json({ error: "Email déjà utilisé" });
