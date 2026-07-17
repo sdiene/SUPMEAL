@@ -1,6 +1,18 @@
+import { useEffect, useState } from "react";
+import apiClient from "../api/client";
+
 export default function GoogleButton() {
+  const [available, setAvailable] = useState(true);
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
   const googleAuthUrl = apiUrl + "/api/auth/google";
+
+  useEffect(() => {
+    apiClient.get("/api/config")
+      .then((res) => setAvailable(res.data.googleOAuth))
+      .catch(() => setAvailable(false));
+  }, []);
+
+  if (!available) return null;
 
   return (
     

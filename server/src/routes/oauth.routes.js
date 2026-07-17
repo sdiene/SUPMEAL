@@ -13,7 +13,12 @@ const router = Router();
  *       302:
  *         description: Redirection vers Google
  */
-router.get("/google", passport.authenticate("google", { scope: ["profile", "email"], session: false }));
+router.get("/google", (req, res, next) => {
+  if (!passport._strategies.google) {
+    return res.status(503).json({ error: "Google OAuth non configuré sur ce serveur" });
+  }
+  passport.authenticate("google", { scope: ["profile", "email"], session: false })(req, res, next);
+});
 
 /**
  * @swagger
@@ -27,7 +32,12 @@ router.get("/google", passport.authenticate("google", { scope: ["profile", "emai
  */
 router.get(
   "/google/callback",
-  passport.authenticate("google", { session: false, failureRedirect: "/api/auth/google/failure" }),
+  (req, res, next) => {
+    if (!passport._strategies.google) {
+      return res.status(503).json({ error: "Google OAuth non configuré" });
+    }
+    passport.authenticate("google", { session: false, failureRedirect: "/api/auth/google/failure" })(req, res, next);
+  },
   googleCallback
 );
 router.get("/google/failure", (req, res) => {
