@@ -21,8 +21,12 @@ export async function registerUser({ email, password, name }) {
       emailVerified: false,
     },
   });
-  await sendVerificationEmail(email, verifyToken);
-  return user;
+  try {
+    await sendVerificationEmail(email, verifyToken);
+  } catch (emailErr) {
+    console.error("Email non envoye:", emailErr.message);
+  }
+  return { user, emailSent: true };
 }
 export async function verifyEmail(token) {
   const user = await prisma.user.findFirst({

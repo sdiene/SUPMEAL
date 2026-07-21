@@ -7,8 +7,10 @@ export default function GoogleButton() {
   const googleAuthUrl = apiUrl + "/api/auth/google";
 
   useEffect(() => {
-    apiClient.get("/api/config")
-      .then((res) => setAvailable(res.data.googleOAuth))
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+    fetch(`${apiUrl}/api/config`)
+      .then((res) => res.json())
+      .then((data) => setAvailable(data.googleOAuth))
       .catch(() => setAvailable(false));
   }, []);
 
