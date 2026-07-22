@@ -64,6 +64,7 @@ export default function RecipeDetailPage() {
   }
 
   const [addingToPlan, setAddingToPlan] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
   const [planSuccess, setPlanSuccess] = useState(false);
 
   async function handleAddToPlan() {
@@ -126,24 +127,29 @@ export default function RecipeDetailPage() {
           </button>
 
           {/* Export */}
-          <div className="relative group">
-            <button className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+          <div className="relative">
+            <button
+              onClick={() => setShowExportMenu((v) => !v)}
+              className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
               ⬇️ Exporter
             </button>
-            <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden z-10 hidden group-hover:block w-32">
-              <button
-                onClick={() => handleExport("json")}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-              >
-                JSON
-              </button>
-              <button
-                onClick={() => handleExport("csv")}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-              >
-                CSV
-              </button>
-            </div>
+            {showExportMenu && (
+              <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden z-10 w-32">
+                <button
+                  onClick={() => { handleExport("json"); setShowExportMenu(false); }}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  JSON
+                </button>
+                <button
+                  onClick={() => { handleExport("csv"); setShowExportMenu(false); }}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  CSV
+                </button>
+              </div>
+            )}
           </div>
 
           {recipe.userId && recipe.userId === user?.id && (
