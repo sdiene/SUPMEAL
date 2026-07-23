@@ -21,6 +21,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(passport.initialize());
+app.get("/api/config", (req, res) => {
+  res.json({
+    googleOAuth: !!(
+      process.env.GOOGLE_CLIENT_ID &&
+      process.env.GOOGLE_CLIENT_ID !== "changeme"
+    ),
+    smtp: !!(
+      process.env.SMTP_USER &&
+      process.env.SMTP_USER !== "lestmpuser"
+    ),
+  });
+});
+
 app.use("/uploads", express.static(path.resolve("uploads")));
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/auth", authRoutes);
@@ -35,20 +48,5 @@ app.use("/api/profiles", profileRoutes);
 app.use("/api/mealplan", mealplanRoutes);
 app.use("/api/public", publicRoutes);
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
-
-app.get("/api/config", (req, res) => {
-  res.json({
-    googleOAuth: !!(
-      process.env.GOOGLE_CLIENT_ID &&
-      process.env.GOOGLE_CLIENT_ID !== "changeme"
-    ),
-    smtp: !!(
-      process.env.SMTP_USER &&
-      process.env.SMTP_USER !== "lestmpuser"
-    ),
-  });
-});
-
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`SUPMEAL server running on port ${PORT}`));
