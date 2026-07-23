@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAllergyCheck } from "../hooks/useAllergyCheck";
-
+import StarRating from "./StarRating";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-
 export default function RecipeCard({ recipe, onFavoriteToggle }) {
   const { checkIngredients } = useAllergyCheck();
   const conflicts = checkIngredients(recipe.ingredients || []);
@@ -58,6 +57,12 @@ export default function RecipeCard({ recipe, onFavoriteToggle }) {
             </span>
           ))}
         </div>
+        {recipe.averageRating && (
+          <div className="flex items-center gap-1 mt-2">
+            <StarRating value={Math.round(recipe.averageRating)} readonly size="sm" />
+            <span className="text-xs text-gray-400">{recipe.averageRating.toFixed(1)}</span>
+          </div>
+        )}
       </div>
     </div>
   );

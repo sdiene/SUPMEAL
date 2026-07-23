@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware.js";
 import { upload } from "../lib/multer.js";
 import commentRoutes from "./comment.routes.js";
+import ratingRoutes from "./rating.routes.js";
 import {
   create,
   list,
@@ -150,4 +151,5 @@ router.patch("/:id/favorite", favorite);
  */
 router.patch("/:id/public", publicToggle);
 router.use("/:recipeId/comments", commentRoutes);
+router.use("/:recipeId/rating", ratingRoutes);
 export default router;

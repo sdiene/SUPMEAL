@@ -33,6 +33,7 @@ model User {
   comments        Comment[]
   messages        Message[]
   mealPlans           MealPlan[]
+  ratings             Rating[]
   sentInvitations     CookbookInvitation[] @relation("InvitedBy")
   receivedInvitations CookbookInvitation[] @relation("InvitedUser")
   following           Follow[] @relation("Follower")
@@ -80,6 +81,7 @@ model Recipe {
   steps       Step[]
   tags        RecipeTag[]
   comments    Comment[]
+  ratings     Rating[]
   mealPlans   MealPlan[]
 }
 model Ingredient {
@@ -179,4 +181,17 @@ model Follow {
   following   User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@unique([followerId, followingId])
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  recipeId  String
+  userId    String
+  value     Int      // 1 à 5
+  createdAt DateTime @default(now())
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeId, userId])
 }
