@@ -3,27 +3,28 @@ import bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Début du peuplement (seeding) de la base de données...');
-  const hashedPassword = await bcrypt.hash('Supmeal2026!', 10);
+  const chacourPassword = await bcrypt.hash('CourCha1', 10);
+  const laminePassword = await bcrypt.hash('Lamine1', 10);
   console.log('👥 Création des utilisateurs...');
   const chef = await prisma.user.upsert({
-    where: { email: 'chef@supmeal.fr' },
+    where: { email: 'chacour@gmail.com' },
     update: {},
     create: {
-      email: 'chef@supmeal.fr',
-      name: 'Chef Supmeal',
-      password: hashedPassword,
+      email: 'chacour@gmail.com',
+      name: 'Chacour Diene',
+      password: chacourPassword,
       diet: 'Omnivore',
       defaultPortions: 4,
       emailVerified: true,
     },
   });
   const commis = await prisma.user.upsert({
-    where: { email: 'commis@supmeal.fr' },
+    where: { email: 'lamine@gmail.com' },
     update: {},
     create: {
-      email: 'commis@supmeal.fr',
-      name: 'Commis de Cuisine',
-      password: hashedPassword,
+      email: 'lamine@gmail.com',
+      name: 'Lamine Diene',
+      password: laminePassword,
       diet: 'Omnivore',
       defaultPortions: 2,
       emailVerified: true,
