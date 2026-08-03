@@ -61,6 +61,7 @@ model CookbookMember {
   cookbook Cookbook @relation(fields: [cookbookId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([cookbookId, userId])
+  @@index([userId])
 }
 model Recipe {
   id          String   @id @default(uuid())
@@ -83,6 +84,9 @@ model Recipe {
   comments    Comment[]
   ratings     Rating[]
   mealPlans   MealPlan[]
+
+  @@index([userId])
+  @@index([cookbookId])
 }
 model Ingredient {
   id       String  @id @default(uuid())
@@ -91,6 +95,8 @@ model Ingredient {
   quantity Float?
   unit     String?
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
 }
 model Step {
   id          String @id @default(uuid())
@@ -98,6 +104,8 @@ model Step {
   order       Int
   instruction String
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
 }
 model Tag {
   id   String @id @default(uuid())
@@ -111,6 +119,7 @@ model RecipeTag {
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
   @@id([recipeId, tagId])
+  @@index([tagId])
 }
 enum MealType {
   BREAKFAST
@@ -127,6 +136,8 @@ model MealPlan {
   mealType MealType @default(DINNER)
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 model Comment {
   id        String   @id @default(uuid())
@@ -137,6 +148,8 @@ model Comment {
 
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
 }
 model Message {
   id         String   @id @default(uuid())
@@ -147,6 +160,8 @@ model Message {
 
   cookbook Cookbook @relation(fields: [cookbookId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([cookbookId])
 }
 
 enum InvitationStatus {
@@ -169,6 +184,7 @@ model CookbookInvitation {
   invitedUser   User     @relation("InvitedUser", fields: [invitedUserId], references: [id], onDelete: Cascade)
 
   @@unique([cookbookId, invitedUserId])
+  @@index([invitedUserId])
 }
 
 model Follow {
@@ -181,6 +197,7 @@ model Follow {
   following   User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@unique([followerId, followingId])
+  @@index([followingId])
 }
 
 model Rating {

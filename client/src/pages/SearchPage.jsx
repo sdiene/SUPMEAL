@@ -119,7 +119,7 @@ export default function SearchPage() {
                 type="text"
                 value={rq}
                 onChange={(e) => setRq(e.target.value)}
-                placeholder="Rechercher par titre..."
+                placeholder="Rechercher par titre, ingrédient ou étape..."
                 className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>

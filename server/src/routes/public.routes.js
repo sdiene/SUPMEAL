@@ -13,7 +13,7 @@ const router = Router();
  *       - in: query
  *         name: q
  *         schema: { type: string }
- *         description: Recherche par titre
+ *         description: Recherche plein texte sur le titre, les ingrédients et les étapes
  *       - in: query
  *         name: tags
  *         schema: { type: string }
@@ -36,7 +36,15 @@ router.get("/recipes", async (req, res) => {
 
     const where = { AND: [{ isPublic: true }] };
 
-    if (q) where.AND.push({ title: { contains: q, mode: "insensitive" } });
+    if (q) {
+      where.AND.push({
+        OR: [
+          { title: { contains: q, mode: "insensitive" } },
+          { ingredients: { some: { name: { contains: q, mode: "insensitive" } } } },
+          { steps: { some: { instruction: { contains: q, mode: "insensitive" } } } },
+        ],
+      });
+    }
     if (ingredient) where.AND.push({ ingredients: { some: { name: { contains: ingredient, mode: "insensitive" } } } });
     if (tags) {
       const tagList = tags.split(",").map((t) => t.trim()).filter(Boolean);

@@ -28,7 +28,13 @@ export async function searchRecipes(userId, filters) {
     where.AND.push({ cookbookId });
   }
   if (q) {
-    where.AND.push({ title: { contains: q, mode: "insensitive" } });
+    where.AND.push({
+      OR: [
+        { title: { contains: q, mode: "insensitive" } },
+        { ingredients: { some: { name: { contains: q, mode: "insensitive" } } } },
+        { steps: { some: { instruction: { contains: q, mode: "insensitive" } } } },
+      ],
+    });
   }
   if (ingredient) {
     where.AND.push({

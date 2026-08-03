@@ -15,7 +15,7 @@ router.use(requireAuth);
  *       - in: query
  *         name: q
  *         schema: { type: string }
- *         description: Recherche plein texte sur le titre
+ *         description: Recherche plein texte sur le titre, les ingrédients et les étapes
  *       - in: query
  *         name: cookbookId
  *         schema: { type: string }

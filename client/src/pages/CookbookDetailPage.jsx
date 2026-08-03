@@ -328,7 +328,7 @@ export default function CookbookDetailPage() {
               type="text"
               value={searchQ}
               onChange={(e) => setSearchQ(e.target.value)}
-              placeholder="Rechercher par titre..."
+              placeholder="Rechercher par titre, ingrédient ou étape..."
               className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
