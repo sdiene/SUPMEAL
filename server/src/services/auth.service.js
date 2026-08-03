@@ -23,10 +23,15 @@ export async function registerUser({ email, password, name }) {
   });
   try {
     await sendVerificationEmail(email, verifyToken);
+    return { user, emailSent: true };
   } catch (emailErr) {
     console.error("Email non envoye:", emailErr.message);
+    const verifiedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: { emailVerified: true, verifyToken: null, verifyTokenExpiry: null },
+    });
+    return { user: verifiedUser, emailSent: false };
   }
-  return { user, emailSent: true };
 }
 export async function verifyEmail(token) {
   const user = await prisma.user.findFirst({

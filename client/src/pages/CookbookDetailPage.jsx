@@ -16,6 +16,7 @@ import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/client";
 import RecipeCard from "../components/RecipeCard";
 import { toggleFavorite } from "../api/recipes";
+import { searchRecipes } from "../api/search";
 const ROLES = ["OWNER", "EDITOR", "READER", "COMMENTER"];
 export default function CookbookDetailPage() {
   const { id } = useParams();
@@ -35,6 +36,14 @@ export default function CookbookDetailPage() {
   const [msgContent, setMsgContent] = useState("");
   const [sendingMsg, setSendingMsg] = useState(false);
   const messagesEndRef = useRef(null);
+  const [searchQ, setSearchQ] = useState("");
+  const [searchTags, setSearchTags] = useState("");
+  const [searchIngredient, setSearchIngredient] = useState("");
+  const [searchMaxPrep, setSearchMaxPrep] = useState("");
+  const [searchMaxCook, setSearchMaxCook] = useState("");
+  const [searchFavoritesOnly, setSearchFavoritesOnly] = useState(false);
+  const [searchResults, setSearchResults] = useState(null);
+  const [searching, setSearching] = useState(false);
   useEffect(() => {
     getCookbook(id)
       .then((res) => setCookbook(res.data.cookbook))
@@ -161,15 +170,45 @@ export default function CookbookDetailPage() {
   async function handleFavoriteToggle(recipeId) {
     try {
       const res = await toggleFavorite(recipeId);
+      const isFavorite = res.data.recipe.isFavorite;
       setCookbook((prev) => ({
         ...prev,
-        recipes: prev.recipes.map((r) =>
-          r.id === recipeId ? { ...r, isFavorite: res.data.recipe.isFavorite } : r
-        ),
+        recipes: prev.recipes.map((r) => (r.id === recipeId ? { ...r, isFavorite } : r)),
       }));
+      setSearchResults((prev) =>
+        prev ? prev.map((r) => (r.id === recipeId ? { ...r, isFavorite } : r)) : prev
+      );
     } catch (err) {
       console.error(err);
     }
+  }
+  async function handleSearch(e) {
+    e?.preventDefault();
+    setSearching(true);
+    try {
+      const params = { cookbookId: id };
+      if (searchQ) params.q = searchQ;
+      if (searchTags) params.tags = searchTags;
+      if (searchIngredient) params.ingredient = searchIngredient;
+      if (searchMaxPrep) params.maxPrepTime = searchMaxPrep;
+      if (searchMaxCook) params.maxCookTime = searchMaxCook;
+      if (searchFavoritesOnly) params.favoritesOnly = true;
+      const res = await searchRecipes(params);
+      setSearchResults(res.data.recipes);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSearching(false);
+    }
+  }
+  function handleResetSearch() {
+    setSearchQ("");
+    setSearchTags("");
+    setSearchIngredient("");
+    setSearchMaxPrep("");
+    setSearchMaxCook("");
+    setSearchFavoritesOnly(false);
+    setSearchResults(null);
   }
   if (loading) return <p className="text-gray-400">Chargement...</p>;
   if (!cookbook) return null;
@@ -284,13 +323,82 @@ export default function CookbookDetailPage() {
             </div>
           )}
 
-          {cookbook.recipes.length === 0 ? (
+          <form onSubmit={handleSearch} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-6 space-y-3">
+            <input
+              type="text"
+              value={searchQ}
+              onChange={(e) => setSearchQ(e.target.value)}
+              placeholder="Rechercher par titre..."
+              className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              <input
+                type="text"
+                value={searchIngredient}
+                onChange={(e) => setSearchIngredient(e.target.value)}
+                placeholder="Ingrédient"
+                className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+              <input
+                type="text"
+                value={searchTags}
+                onChange={(e) => setSearchTags(e.target.value)}
+                placeholder="Tags (ex : Dessert)"
+                className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+              <input
+                type="number"
+                value={searchMaxPrep}
+                onChange={(e) => setSearchMaxPrep(e.target.value)}
+                placeholder="Prépa max (min)"
+                className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+              <input
+                type="number"
+                value={searchMaxCook}
+                onChange={(e) => setSearchMaxCook(e.target.value)}
+                placeholder="Cuisson max (min)"
+                className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+              <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <input
+                  type="checkbox"
+                  checked={searchFavoritesOnly}
+                  onChange={(e) => setSearchFavoritesOnly(e.target.checked)}
+                  className="rounded"
+                />
+                Favoris uniquement
+              </label>
+            </div>
+            <div className="flex gap-3">
+              <button
+                type="submit"
+                disabled={searching}
+                className="bg-red-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
+              >
+                {searching ? "Recherche..." : "🔍 Rechercher"}
+              </button>
+              {searchResults !== null && (
+                <button
+                  type="button"
+                  onClick={handleResetSearch}
+                  className="text-gray-500 dark:text-gray-400 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Réinitialiser
+                </button>
+              )}
+            </div>
+          </form>
+
+          {(searchResults ?? cookbook.recipes).length === 0 ? (
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
-              <p className="text-gray-400">Aucune recette dans ce cookbook</p>
+              <p className="text-gray-400">
+                {searchResults !== null ? "Aucune recette ne correspond à cette recherche" : "Aucune recette dans ce cookbook"}
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-4">
-              {cookbook.recipes.map((recipe) => (
+              {(searchResults ?? cookbook.recipes).map((recipe) => (
                 <RecipeCard
                   key={recipe.id}
                   recipe={recipe}
