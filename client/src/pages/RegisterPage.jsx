@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import apiClient from "../api/client";
-import { useAuth } from "../context/AuthContext";
 import GoogleButton from "../components/GoogleButton";
 
 export default function RegisterPage() {
@@ -11,7 +10,6 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -22,9 +20,9 @@ export default function RegisterPage() {
     try {
       const res = await apiClient.post("/api/auth/register", { name, email, password });
       if (res.data.emailVerificationRequired === false) {
-        // SMTP non configuré — connexion directe
-        login(res.data.token, res.data.user);
-        navigate("/");
+        navigate("/login", {
+          state: { message: "Compte créé avec succès ! Connectez-vous avec vos identifiants." },
+        });
       } else {
         setSuccess(true);
       }
