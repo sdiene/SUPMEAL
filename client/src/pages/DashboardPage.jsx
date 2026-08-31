@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import apiClient from "../api/client";
 import { getFeed } from "../api/profiles";
 import { useAuth } from "../context/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUtensils, faRss, faFire, faBook, faStopwatch, faArrowRight, faPlus } from "@fortawesome/free-solid-svg-icons";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -33,7 +35,7 @@ export default function DashboardPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">
-        Bonjour, {user?.name} 👋
+        Bonjour, {user?.name}
       </h1>
       <p className="text-gray-400 mb-8">Voici un aperçu de vos recettes et cookbooks.</p>
 
@@ -58,13 +60,13 @@ export default function DashboardPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Recettes récentes</h2>
-          <Link to="/recipes" className="text-sm text-green-600 hover:underline">Voir tout →</Link>
+          <Link to="/recipes" className="text-sm text-green-600 hover:underline">Voir tout <FontAwesomeIcon icon={faArrowRight} /></Link>
         </div>
         {recipes.length === 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center">
             <p className="text-gray-400 mb-3">Aucune recette pour l'instant</p>
             <Link to="/recipes/new" className="inline-block bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
-              + Créer une recette
+              <FontAwesomeIcon icon={faPlus} /> Créer une recette
             </Link>
           </div>
         ) : (
@@ -82,13 +84,13 @@ export default function DashboardPage() {
                     className="w-full h-32 object-cover"
                   />
                 ) : (
-                  <div className="w-full h-32 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-3xl">🍽️</div>
+                  <div className="w-full h-32 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-3xl"><FontAwesomeIcon icon={faUtensils} /></div>
                 )}
                 <div className="p-4">
                   <h3 className="font-semibold text-gray-800 dark:text-white">{recipe.title}</h3>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {recipe.prepTime ? `⏱ ${recipe.prepTime} min` : ""}
-                    {recipe.cookTime ? ` · 🔥 ${recipe.cookTime} min` : ""}
+                  <p className="text-xs text-gray-400 mt-1 flex items-center gap-2">
+                    {recipe.prepTime ? <span><FontAwesomeIcon icon={faStopwatch} /> {recipe.prepTime} min</span> : null}
+                    {recipe.cookTime ? <span><FontAwesomeIcon icon={faFire} /> {recipe.cookTime} min</span> : null}
                   </p>
                   <div className="flex gap-1 mt-2 flex-wrap">
                     {recipe.tags?.slice(0, 3).map((rt) => (
@@ -108,10 +110,10 @@ export default function DashboardPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-              📡 Fil d'actualité
+              <FontAwesomeIcon icon={faRss} /> Fil d'actualité
             </h2>
             <Link to="/feed" className="text-sm text-red-600 hover:underline">
-              Voir tout ({feed.length}) →
+              Voir tout ({feed.length}) <FontAwesomeIcon icon={faArrowRight} />
             </Link>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -124,7 +126,7 @@ export default function DashboardPage() {
                 {recipe.imageUrl ? (
                   <img src={API_URL + recipe.imageUrl} alt={recipe.title} className="w-full h-32 object-cover" />
                 ) : (
-                  <div className="w-full h-32 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-3xl">🍽️</div>
+                  <div className="w-full h-32 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-3xl"><FontAwesomeIcon icon={faUtensils} /></div>
                 )}
                 <div className="p-3">
                   <h3 className="font-semibold text-gray-800 dark:text-white text-sm">{recipe.title}</h3>
@@ -142,7 +144,7 @@ export default function DashboardPage() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Mes cookbooks</h2>
-          <Link to="/cookbooks" className="text-sm text-green-600 hover:underline">Voir tout →</Link>
+          <Link to="/cookbooks" className="text-sm text-green-600 hover:underline">Voir tout <FontAwesomeIcon icon={faArrowRight} /></Link>
         </div>
         {cookbooks.length === 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 p-8 text-center">
@@ -156,7 +158,7 @@ export default function DashboardPage() {
                 to={`/cookbooks/${cb.id}`}
                 className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow"
               >
-                <h3 className="font-semibold text-gray-800 dark:text-white">📚 {cb.name}</h3>
+                <h3 className="font-semibold text-gray-800 dark:text-white"><FontAwesomeIcon icon={faBook} /> {cb.name}</h3>
                 {cb.description && (
                   <p className="text-sm text-gray-400 mt-1 truncate">{cb.description}</p>
                 )}

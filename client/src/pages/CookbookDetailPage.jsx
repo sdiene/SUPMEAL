@@ -17,6 +17,20 @@ import apiClient from "../api/client";
 import RecipeCard from "../components/RecipeCard";
 import { toggleFavorite } from "../api/recipes";
 import { searchRecipes } from "../api/search";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUtensils,
+  faUsers,
+  faComment,
+  faChevronLeft,
+  faBook,
+  faGlobe,
+  faLock,
+  faTrash,
+  faXmark,
+  faMagnifyingGlass,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 const ROLES = ["OWNER", "EDITOR", "READER", "COMMENTER"];
 export default function CookbookDetailPage() {
   const { id } = useParams();
@@ -213,16 +227,20 @@ export default function CookbookDetailPage() {
   if (loading) return <p className="text-gray-400">Chargement...</p>;
   if (!cookbook) return null;
   const tabs = ["recipes", "members", "messages"];
-  const tabLabels = { recipes: "🍽️ Recettes", members: "👥 Membres", messages: "💬 Messages" };
+  const tabLabels = {
+    recipes: <><FontAwesomeIcon icon={faUtensils} /> Recettes</>,
+    members: <><FontAwesomeIcon icon={faUsers} /> Membres</>,
+    messages: <><FontAwesomeIcon icon={faComment} /> Messages</>,
+  };
   return (
     <div>
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
           <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-gray-600 text-sm mb-2 block">
-            ← Retour
+            <FontAwesomeIcon icon={faChevronLeft} /> Retour
           </button>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">📚 {cookbook.name}</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white"><FontAwesomeIcon icon={faBook} /> {cookbook.name}</h1>
           {cookbook.description && (
             <p className="text-gray-400 dark:text-gray-400 mt-1">{cookbook.description}</p>
           )}
@@ -238,13 +256,13 @@ export default function CookbookDetailPage() {
                   : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200"
               }`}
             >
-              {cookbook.isPublic ? "🌍 Public" : "🔒 Privé"}
+              {cookbook.isPublic ? <><FontAwesomeIcon icon={faGlobe} /> Public</> : <><FontAwesomeIcon icon={faLock} /> Privé</>}
             </button>
             <button
               onClick={handleDeleteCookbook}
               className="text-sm bg-red-50 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors"
             >
-              🗑️ Supprimer
+              <FontAwesomeIcon icon={faTrash} /> Supprimer
             </button>
           </div>
         )}
@@ -274,14 +292,14 @@ export default function CookbookDetailPage() {
                 onClick={() => setShowAddRecipe(true)}
                 className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
               >
-                + Ajouter une recette existante
+<FontAwesomeIcon icon={faPlus} /> Ajouter une recette existante
               </button>
-              
+
               <a
                 href={"/recipes/new?cookbookId=" + id}
                 className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
-                + Créer une nouvelle recette
+                <FontAwesomeIcon icon={faPlus} /> Créer une nouvelle recette
               </a>
             </div>
           )}
@@ -291,7 +309,7 @@ export default function CookbookDetailPage() {
               <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="font-semibold text-gray-800 dark:text-white">Ajouter une recette</h2>
-                  <button onClick={() => setShowAddRecipe(false)} className="text-gray-400 hover:text-gray-600 text-xl">×</button>
+                  <button onClick={() => setShowAddRecipe(false)} className="text-gray-400 hover:text-gray-600 text-xl"><FontAwesomeIcon icon={faXmark} /></button>
                 </div>
                 {myRecipes.length === 0 ? (
                   <p className="text-gray-400 text-center py-8">Aucune recette personnelle disponible</p>
@@ -376,7 +394,7 @@ export default function CookbookDetailPage() {
                 disabled={searching}
                 className="bg-red-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
               >
-                {searching ? "Recherche..." : "🔍 Rechercher"}
+                {searching ? "Recherche..." : <><FontAwesomeIcon icon={faMagnifyingGlass} /> Rechercher</>}
               </button>
               {searchResults !== null && (
                 <button
@@ -471,7 +489,7 @@ export default function CookbookDetailPage() {
                       onClick={() => handleRemoveMember(member.userId)}
                       className="text-red-400 hover:text-red-600 text-sm"
                     >
-                      ×
+                      <FontAwesomeIcon icon={faXmark} />
                     </button>
                   </div>
                 ) : (

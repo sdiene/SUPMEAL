@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { searchRecipes } from "../api/search";
 import { toggleFavorite } from "../api/recipes";
 import RecipeCard from "../components/RecipeCard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons";
 
 export default function FavoritesPage() {
   const [recipes, setRecipes] = useState([]);
@@ -31,7 +34,7 @@ export default function FavoritesPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">
-        ⭐ Mes favoris
+<FontAwesomeIcon icon={faStar} /> Mes favoris
       </h1>
       <div className="flex items-center justify-between mb-6">
         <p className="text-gray-400 text-sm">
@@ -48,10 +51,10 @@ export default function FavoritesPage() {
 
       {recipes.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
-          <p className="text-4xl mb-3">⭐</p>
+          <p className="text-4xl mb-3"><FontAwesomeIcon icon={faStar} /></p>
           <p className="text-gray-400">Aucune recette en favori pour l'instant</p>
           <p className="text-gray-300 text-sm mt-1">
-            Cliquez sur l'étoile ☆ sur une recette pour l'ajouter aux favoris
+            Cliquez sur l'étoile <FontAwesomeIcon icon={faStarRegular} /> sur une recette pour l'ajouter aux favoris
           </p>
         </div>
       ) : (

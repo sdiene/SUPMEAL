@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getCookbooks, createCookbook } from "../api/cookbooks";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faBook, faUsers } from "@fortawesome/free-solid-svg-icons";
 export default function CookbooksPage() {
   const [cookbooks, setCookbooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +46,7 @@ export default function CookbooksPage() {
           onClick={() => setShowForm(!showForm)}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
         >
-          + Nouveau cookbook
+          <FontAwesomeIcon icon={faPlus} /> Nouveau cookbook
         </button>
       </div>
       {/* Formulaire création */}
@@ -108,7 +110,7 @@ export default function CookbooksPage() {
         (cb.description || "").toLowerCase().includes(cbSearch.toLowerCase())
       ).length === 0 ? (
         <div className="bg-white rounded-xl border border-dashed border-gray-300 p-12 text-center">
-          <p className="text-4xl mb-3">📚</p>
+          <p className="text-4xl mb-3"><FontAwesomeIcon icon={faBook} /></p>
           <p className="text-gray-400">Aucun cookbook pour l'instant</p>
         </div>
       ) : (
@@ -119,12 +121,12 @@ export default function CookbooksPage() {
               to={`/cookbooks/${cb.id}`}
               className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
             >
-              <h2 className="font-semibold text-gray-800 dark:text-white text-lg mb-1">📚 {cb.name}</h2>
+              <h2 className="font-semibold text-gray-800 dark:text-white text-lg mb-1"><FontAwesomeIcon icon={faBook} /> {cb.name}</h2>
               {cb.description && (
                 <p className="text-sm text-gray-400 mb-3 truncate">{cb.description}</p>
               )}
               <div className="flex items-center gap-4 text-xs text-gray-400">
-                <span>👥 {cb.members.length} membre{cb.members.length > 1 ? "s" : ""}</span>
+                <span><FontAwesomeIcon icon={faUsers} /> {cb.members.length} membre{cb.members.length > 1 ? "s" : ""}</span>
                 <span>
                   {cb.members.find((m) => m.role === "OWNER")?.user?.name
                     ? `Créateur : ${cb.members.find((m) => m.role === "OWNER").user.name}`

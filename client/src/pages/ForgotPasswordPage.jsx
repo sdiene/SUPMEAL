@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import apiClient from "../api/client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,7 +25,7 @@ export default function ForgotPasswordPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md text-center">
-          <p className="text-4xl mb-4">📧</p  >
+          <p className="text-4xl mb-4"><FontAwesomeIcon icon={faEnvelope} /></p>
           <h1 className="text-xl font-bold text-gray-800 mb-2">Email envoyé !</h1>
           <p className="text-gray-500 mb-6">
             Si un compte existe avec l'adresse <strong>{email}</strong>, vous recevrez un email avec un lien de réinitialisation valable 1h.
@@ -69,7 +71,7 @@ export default function ForgotPasswordPage() {
 
         <p className="text-sm text-gray-400 text-center mt-6">
           <Link to="/login" className="text-red-600 hover:underline">
-            ← Retour à la connexion
+<FontAwesomeIcon icon={faChevronLeft} /> Retour à la connexion
           </Link>
         </p>
       </div>

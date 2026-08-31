@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
 export default function RecipeForm({ initial = {}, onSubmit, loading }) {
   const [title, setTitle] = useState(initial.title || "");
   const [prepTime, setPrepTime] = useState(initial.prepTime || "");
@@ -164,7 +166,7 @@ export default function RecipeForm({ initial = {}, onSubmit, loading }) {
                 onClick={() => removeIngredient(index)}
                 className="text-red-400 hover:text-red-600 text-lg"
               >
-                ×
+                <FontAwesomeIcon icon={faXmark} />
               </button>
             </div>
           ))}
@@ -174,7 +176,7 @@ export default function RecipeForm({ initial = {}, onSubmit, loading }) {
           onClick={addIngredient}
           className="mt-3 text-sm text-blue-600 hover:underline"
         >
-          + Ajouter un ingrédient
+          <FontAwesomeIcon icon={faPlus} /> Ajouter un ingrédient
         </button>
       </div>
 
@@ -199,7 +201,7 @@ export default function RecipeForm({ initial = {}, onSubmit, loading }) {
                 onClick={() => removeStep(index)}
                 className="text-red-400 hover:text-red-600 text-lg mt-1.5"
               >
-                ×
+                <FontAwesomeIcon icon={faXmark} />
               </button>
             </div>
           ))}
@@ -209,7 +211,7 @@ export default function RecipeForm({ initial = {}, onSubmit, loading }) {
           onClick={addStep}
           className="mt-3 text-sm text-blue-600 hover:underline"
         >
-          + Ajouter une étape
+          <FontAwesomeIcon icon={faPlus} /> Ajouter une étape
         </button>
       </div>
 

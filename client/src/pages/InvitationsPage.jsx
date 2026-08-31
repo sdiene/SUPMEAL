@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { getMyInvitations, respondToInvitation } from "../api/invitations";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBell, faBook, faCircleCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
 export default function InvitationsPage() {
   const [invitations, setInvitations] = useState([]);
@@ -30,7 +32,7 @@ export default function InvitationsPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">
-        🔔 Invitations
+<FontAwesomeIcon icon={faBell} /> Invitations
       </h1>
       <p className="text-gray-400 text-sm mb-6">
         {invitations.length} invitation{invitations.length > 1 ? "s" : ""} en attente
@@ -38,7 +40,7 @@ export default function InvitationsPage() {
 
       {invitations.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
-          <p className="text-4xl mb-3">🔔</p>
+          <p className="text-4xl mb-3"><FontAwesomeIcon icon={faBell} /></p>
           <p className="text-gray-400">Aucune invitation en attente</p>
           <p className="text-gray-300 dark:text-gray-600 text-sm mt-1">
             Vous serez notifié ici quand quelqu'un vous invite dans un cookbook
@@ -54,7 +56,7 @@ export default function InvitationsPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-2xl">📚</span>
+                    <span className="text-2xl"><FontAwesomeIcon icon={faBook} /></span>
                     <h2 className="font-semibold text-gray-800 dark:text-white text-lg">
                       {inv.cookbook.name}
                     </h2>
@@ -86,14 +88,14 @@ export default function InvitationsPage() {
                     disabled={responding[inv.id]}
                     className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 transition-colors"
                   >
-                    {responding[inv.id] ? "..." : "✅ Accepter"}
+                    {responding[inv.id] ? "..." : <><FontAwesomeIcon icon={faCircleCheck} /> Accepter</>}
                   </button>
                   <button
                     onClick={() => handleRespond(inv.id, false)}
                     disabled={responding[inv.id]}
                     className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 transition-colors"
                   >
-                    {responding[inv.id] ? "..." : "❌ Refuser"}
+                    {responding[inv.id] ? "..." : <><FontAwesomeIcon icon={faCircleXmark} /> Refuser</>}
                   </button>
                 </div>
               </div>

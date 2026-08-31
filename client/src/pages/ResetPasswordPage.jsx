@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import apiClient from "../api/client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleXmark, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -14,7 +16,7 @@ export default function ResetPasswordPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md text-center">
-          <p className="text-4xl mb-4">❌</p>
+          <p className="text-4xl mb-4"><FontAwesomeIcon icon={faCircleXmark} /></p>
           <h1 className="text-xl font-bold text-gray-800 mb-4">Lien invalide</h1>
           <Link to="/forgot-password" className="text-red-600 hover:underline">
             Demander un nouveau lien
@@ -45,7 +47,7 @@ export default function ResetPasswordPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md text-center">
-          <p className="text-4xl mb-4">✅</p>
+          <p className="text-4xl mb-4"><FontAwesomeIcon icon={faCircleCheck} /></p>
           <h1 className="text-xl font-bold text-gray-800 mb-2">Mot de passe réinitialisé !</h1>
           <p className="text-gray-400 mb-2">Vous allez être redirigé vers la connexion...</p>
         </div>

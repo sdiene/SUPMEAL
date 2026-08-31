@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 export default function StarRating({ value, onChange, readonly = false, size = "md" }) {
   const [hovered, setHovered] = useState(0);
   const sizeClass = size === "sm" ? "text-lg" : size === "lg" ? "text-3xl" : "text-2xl";
@@ -23,7 +25,7 @@ export default function StarRating({ value, onChange, readonly = false, size = "
                 : "text-gray-300 dark:text-gray-600"
             }
           >
-            ★
+            <FontAwesomeIcon icon={faStar} />
           </span>
         </button>
       ))}

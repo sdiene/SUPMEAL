@@ -3,6 +3,16 @@ import { useNavigate } from "react-router-dom";
 import apiClient from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { importRecipes } from "../api/recipes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBowlFood,
+  faTriangleExclamation,
+  faBox,
+  faDownload,
+  faUpload,
+  faTrash,
+  faCircleCheck,
+} from "@fortawesome/free-solid-svg-icons";
 export default function SettingsPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -77,7 +87,7 @@ export default function SettingsPage() {
         result = await importRecipes("json", json);
       }
 
-      setImportSuccess(`✅ ${result.data.imported} recette(s) importée(s) avec succès !`);
+      setImportSuccess(`${result.data.imported} recette(s) importée(s) avec succès !`);
     } catch (err) {
       setImportError(err.response?.data?.error || "Fichier invalide ou erreur serveur");
     } finally {
@@ -126,7 +136,7 @@ export default function SettingsPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              🥗 Régime alimentaire
+              <FontAwesomeIcon icon={faBowlFood} /> Régime alimentaire
               <span className="text-xs text-gray-400 font-normal ml-2">
                 (utilisé pour filtrer les recettes incompatibles)
               </span>
@@ -136,17 +146,18 @@ export default function SettingsPage() {
               onChange={(e) => setDiet(e.target.value)}
               className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             >
+              {/* Les <option> HTML natifs ne peuvent afficher que du texte, pas d'icônes FontAwesome */}
               <option value="">Aucun régime spécifique</option>
-              <option value="végétarien">🌿 Végétarien</option>
-              <option value="vegan">🌱 Vegan</option>
-              <option value="sans gluten">🌾 Sans gluten</option>
-              <option value="halal">☪️ Halal</option>
-              <option value="kasher">✡️ Kasher</option>
+              <option value="végétarien">Végétarien</option>
+              <option value="vegan">Vegan</option>
+              <option value="sans gluten">Sans gluten</option>
+              <option value="halal">Halal</option>
+              <option value="kasher">Kasher</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              ⚠️ Allergies
+              <FontAwesomeIcon icon={faTriangleExclamation} /> Allergies
               <span className="text-xs text-gray-400 font-normal ml-2">
                 (séparées par virgules — des alertes apparaîtront sur les recettes concernées)
               </span>
@@ -162,7 +173,7 @@ export default function SettingsPage() {
               <div className="flex gap-2 flex-wrap mt-2">
                 {allergies.split(",").map((a) => a.trim()).filter(Boolean).map((a) => (
                   <span key={a} className="text-xs bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-1 rounded-full">
-                    ⚠️ {a}
+                    <FontAwesomeIcon icon={faTriangleExclamation} /> {a}
                   </span>
                 ))}
               </div>
@@ -229,7 +240,7 @@ export default function SettingsPage() {
 
       {/* Import / Export */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-        <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-1">📦 Import / Export</h2>
+        <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-1"><FontAwesomeIcon icon={faBox} /> Import / Export</h2>
         <p className="text-xs text-gray-400 mb-4">
           Exportez vos recettes en JSON ou CSV. Importez des recettes depuis un fichier compatible.
         </p>
@@ -259,7 +270,7 @@ export default function SettingsPage() {
               }}
               className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
             >
-              ⬇️ Export JSON
+<FontAwesomeIcon icon={faDownload} /> Export JSON
             </a>
             
             <a
@@ -283,7 +294,7 @@ export default function SettingsPage() {
               }}
               className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
             >
-              ⬇️ Export CSV
+<FontAwesomeIcon icon={faDownload} /> Export CSV
             </a>
           </div>
         </div>
@@ -293,7 +304,7 @@ export default function SettingsPage() {
           <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Importer des recettes</h3>
           <p className="text-xs text-gray-400 mb-3">Formats acceptés : JSON ou CSV (compatibles SUPMEAL)</p>
 
-          {importSuccess && <p className="text-green-600 text-sm mb-3">{importSuccess}</p>}
+          {importSuccess && <p className="text-green-600 text-sm mb-3"><FontAwesomeIcon icon={faCircleCheck} /> {importSuccess}</p>}
           {importError && <p className="text-red-500 text-sm mb-3">{importError}</p>}
 
           <label className="flex items-center gap-3 cursor-pointer">
@@ -310,7 +321,7 @@ export default function SettingsPage() {
                 ? "bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
                 : "bg-red-600 text-white hover:bg-red-700 cursor-pointer"
             }`}>
-              {importLoading ? "Import en cours..." : "⬆️ Importer un fichier"}
+              {importLoading ? "Import en cours..." : <><FontAwesomeIcon icon={faUpload} /> Importer un fichier</>}
             </span>
             <span className="text-xs text-gray-400">
               Les recettes importées seront ajoutées à vos recettes personnelles
@@ -321,7 +332,7 @@ export default function SettingsPage() {
 
       {/* Danger zone */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-red-200 dark:border-red-900 p-6">
-        <h2 className="font-semibold text-red-600 mb-2">⚠️ Zone dangereuse</h2>
+        <h2 className="font-semibold text-red-600 mb-2"><FontAwesomeIcon icon={faTriangleExclamation} /> Zone dangereuse</h2>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
           La suppression de votre compte est définitive et irréversible. Toutes vos recettes,
           cookbooks et données seront supprimés.
@@ -332,7 +343,7 @@ export default function SettingsPage() {
           disabled={deleteLoading}
           className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
         >
-          {deleteLoading ? "Suppression..." : "🗑️ Supprimer mon compte"}
+          {deleteLoading ? "Suppression..." : <><FontAwesomeIcon icon={faTrash} /> Supprimer mon compte</>}
         </button>
       </div>
     </div>

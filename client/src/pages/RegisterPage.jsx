@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import apiClient from "../api/client";
 import GoogleButton from "../components/GoogleButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -37,7 +39,7 @@ export default function RegisterPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md text-center">
-          <p className="text-4xl mb-4">📧</p>
+          <p className="text-4xl mb-4"><FontAwesomeIcon icon={faEnvelope} /></p>
           <h1 className="text-xl font-bold text-gray-800 mb-2">Vérifiez votre email</h1>
           <p className="text-gray-500 mb-6">
             Un email de vérification a été envoyé à <strong>{email}</strong>.<br />

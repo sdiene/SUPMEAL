@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { useAllergyCheck } from "../hooks/useAllergyCheck";
 import StarRating from "./StarRating";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUtensils, faStar, faTriangleExclamation, faStopwatch, faFire, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export default function RecipeCard({ recipe, onFavoriteToggle }) {
   const { checkIngredients } = useAllergyCheck();
@@ -15,7 +18,7 @@ export default function RecipeCard({ recipe, onFavoriteToggle }) {
         />
       ) : (
         <div className="w-full h-40 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-4xl">
-          🍽️
+          <FontAwesomeIcon icon={faUtensils} />
         </div>
       )}
 
@@ -32,19 +35,19 @@ export default function RecipeCard({ recipe, onFavoriteToggle }) {
             className="text-lg flex-shrink-0"
             title={recipe.isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
           >
-            {recipe.isFavorite ? "⭐" : "☆"}
+            <FontAwesomeIcon icon={recipe.isFavorite ? faStar : faStarRegular} />
           </button>
         </div>
 
         {conflicts.length > 0 && (
           <span className="inline-flex items-center gap-1 text-xs bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full mt-1 mb-1">
-            ⚠️ Allergène
+<FontAwesomeIcon icon={faTriangleExclamation} /> Allergène
           </span>
         )}
-        <p className="text-xs text-gray-400 dark:text-gray-400 mt-1">
-          {recipe.prepTime ? `⏱ ${recipe.prepTime} min` : ""}
-          {recipe.cookTime ? ` · 🔥 ${recipe.cookTime} min` : ""}
-          {recipe.servings ? ` · 👥 ${recipe.servings} pers.` : ""}
+        <p className="text-xs text-gray-400 dark:text-gray-400 mt-1 flex items-center gap-2 flex-wrap">
+          {recipe.prepTime ? <span><FontAwesomeIcon icon={faStopwatch} /> {recipe.prepTime} min</span> : null}
+          {recipe.cookTime ? <span><FontAwesomeIcon icon={faFire} /> {recipe.cookTime} min</span> : null}
+          {recipe.servings ? <span><FontAwesomeIcon icon={faUsers} /> {recipe.servings} pers.</span> : null}
         </p>
 
         <div className="flex gap-1 mt-2 flex-wrap">

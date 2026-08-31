@@ -3,6 +3,22 @@ import { Link } from "react-router-dom";
 import { getPublicRecipes, toggleFavorite } from "../api/recipes";
 import { searchProfiles } from "../api/profiles";
 import { getPublicCookbooks, copyRecipeToMyRecipes } from "../api/cookbooks";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faGlobe,
+  faUtensils,
+  faBook,
+  faUserGroup,
+  faUsers,
+  faCartShopping,
+  faTag,
+  faStopwatch,
+  faFire,
+  faMagnifyingGlass,
+  faArrowRight,
+  faCircleCheck,
+  faClipboardList,
+} from "@fortawesome/free-solid-svg-icons";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export default function SearchPage() {
   const [activeTab, setActiveTab] = useState("public-recipes");
@@ -83,7 +99,7 @@ export default function SearchPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">
-        🌍 Découverte
+        <FontAwesomeIcon icon={faGlobe} /> Découverte
       </h1>
       <p className="text-gray-400 text-sm mb-6">
         Explorez les recettes et cookbooks partagés par la communauté
@@ -92,9 +108,9 @@ export default function SearchPage() {
       {/* Onglets */}
       <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-6 w-fit">
         {[
-          { id: "public-recipes", label: "��️ Recettes publiques" },
-          { id: "public-cookbooks", label: "📚 Cookbooks publics" },
-          { id: "chefs", label: "👨‍🍳 Cuisiniers" },
+          { id: "public-recipes", label: <><FontAwesomeIcon icon={faUtensils} /> Recettes publiques</> },
+          { id: "public-cookbooks", label: <><FontAwesomeIcon icon={faBook} /> Cookbooks publics</> },
+          { id: "chefs", label: <><FontAwesomeIcon icon={faUserGroup} /> Cuisiniers</> },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -125,7 +141,7 @@ export default function SearchPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🛒 Ingrédient</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><FontAwesomeIcon icon={faCartShopping} /> Ingrédient</label>
                 <input
                   type="text"
                   value={ringredient}
@@ -135,7 +151,7 @@ export default function SearchPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🏷️ Tags</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><FontAwesomeIcon icon={faTag} /> Tags</label>
                 <input
                   type="text"
                   value={rtags}
@@ -145,7 +161,7 @@ export default function SearchPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">⏱ Prépa max (min)</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><FontAwesomeIcon icon={faStopwatch} /> Prépa max (min)</label>
                 <input
                   type="number"
                   value={rmaxPrep}
@@ -155,7 +171,7 @@ export default function SearchPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🔥 Cuisson max (min)</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><FontAwesomeIcon icon={faFire} /> Cuisson max (min)</label>
                 <input
                   type="number"
                   value={rmaxCook}
@@ -170,7 +186,7 @@ export default function SearchPage() {
               disabled={rLoading}
               className="bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
             >
-              {rLoading ? "Recherche..." : "🔍 Rechercher"}
+              {rLoading ? "Recherche..." : <><FontAwesomeIcon icon={faMagnifyingGlass} /> Rechercher</>}
             </button>
           </form>
 
@@ -195,14 +211,14 @@ export default function SearchPage() {
                     {recipe.imageUrl ? (
                       <img src={API_URL + recipe.imageUrl} alt={recipe.title} className="w-full h-40 object-cover" />
                     ) : (
-                      <div className="w-full h-40 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-4xl">🍽️</div>
+                      <div className="w-full h-40 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-4xl"><FontAwesomeIcon icon={faUtensils} /></div>
                     )}
                     <div className="p-4">
                       <h3 className="font-semibold text-gray-800 dark:text-white">{recipe.title}</h3>
                       <p className="text-xs text-gray-400 mt-1">Par {recipe.user?.name || "Anonyme"}</p>
-                      <p className="text-xs text-gray-400 mt-1">
-                        {recipe.prepTime ? `⏱ ${recipe.prepTime} min` : ""}
-                        {recipe.cookTime ? ` · 🔥 ${recipe.cookTime} min` : ""}
+                      <p className="text-xs text-gray-400 mt-1 flex items-center gap-2">
+                        {recipe.prepTime ? <span><FontAwesomeIcon icon={faStopwatch} /> {recipe.prepTime} min</span> : null}
+                        {recipe.cookTime ? <span><FontAwesomeIcon icon={faFire} /> {recipe.cookTime} min</span> : null}
                       </p>
                       <div className="flex gap-1 mt-2 flex-wrap">
                         {recipe.tags?.slice(0, 3).map((rt) => (
@@ -220,7 +236,7 @@ export default function SearchPage() {
 
           {!rSearched && (
             <div className="text-center py-12 text-gray-300 dark:text-gray-600">
-              <p className="text-5xl mb-3">🌍</p>
+              <p className="text-5xl mb-3"><FontAwesomeIcon icon={faGlobe} /></p>
               <p>Recherchez parmi les recettes partagées par la communauté</p>
             </div>
           )}
@@ -243,7 +259,7 @@ export default function SearchPage() {
               disabled={chefsLoading}
               className="bg-red-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
             >
-              {chefsLoading ? "..." : "🔍 Rechercher"}
+              {chefsLoading ? "..." : <><FontAwesomeIcon icon={faMagnifyingGlass} /> Rechercher</>}
             </button>
           </form>
 
@@ -267,11 +283,11 @@ export default function SearchPage() {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-800 dark:text-white">{chef.name}</h3>
                     <div className="flex gap-3 text-xs text-gray-400 mt-1">
-                      <span>🍽️ {chef._count.recipes} recettes</span>
-                      <span>👥 {chef._count.followers} abonnés</span>
+                      <span><FontAwesomeIcon icon={faUtensils} /> {chef._count.recipes} recettes</span>
+                      <span><FontAwesomeIcon icon={faUsers} /> {chef._count.followers} abonnés</span>
                     </div>
                   </div>
-                  <span className="text-red-600 dark:text-red-400 text-sm">→</span>
+                  <span className="text-red-600 dark:text-red-400 text-sm"><FontAwesomeIcon icon={faArrowRight} /></span>
                 </Link>
               ))}
             </div>
@@ -279,7 +295,7 @@ export default function SearchPage() {
 
           {!chefsSearched && (
             <div className="text-center py-12 text-gray-300 dark:text-gray-600">
-              <p className="text-5xl mb-3">👨‍🍳</p>
+              <p className="text-5xl mb-3"><FontAwesomeIcon icon={faUserGroup} /></p>
               <p>Recherchez des cuisiniers par nom pour découvrir leurs recettes</p>
             </div>
           )}
@@ -303,7 +319,7 @@ export default function SearchPage() {
                 disabled={cLoading}
                 className="bg-red-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
               >
-                {cLoading ? "..." : "🔍 Rechercher"}
+                {cLoading ? "..." : <><FontAwesomeIcon icon={faMagnifyingGlass} /> Rechercher</>}
               </button>
             </div>
           </form>
@@ -323,13 +339,13 @@ export default function SearchPage() {
                 <div key={cb.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="font-semibold text-gray-800 dark:text-white text-lg">📚 {cb.name}</h3>
+                      <h3 className="font-semibold text-gray-800 dark:text-white text-lg"><FontAwesomeIcon icon={faBook} /> {cb.name}</h3>
                       {cb.description && <p className="text-sm text-gray-400 mt-1">{cb.description}</p>}
                       <p className="text-xs text-gray-400 mt-1">
                         Par {cb.members[0]?.user?.name || "Anonyme"} · {cb.recipes.length} recette{cb.recipes.length > 1 ? "s" : ""}
                       </p>
                     </div>
-                    <span className="text-xs bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-2 py-1 rounded-full">🌍 Public</span>
+                    <span className="text-xs bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-2 py-1 rounded-full"><FontAwesomeIcon icon={faGlobe} /> Public</span>
                   </div>
 
                   {cb.recipes.length === 0 ? (
@@ -343,9 +359,9 @@ export default function SearchPage() {
                             className="flex-1 min-w-0 hover:text-red-600 transition-colors"
                           >
                             <p className="text-sm font-medium text-gray-800 dark:text-white truncate">{recipe.title}</p>
-                            <p className="text-xs text-gray-400">
-                              {recipe.prepTime ? `⏱ ${recipe.prepTime} min` : ""}
-                              {recipe.cookTime ? ` · 🔥 ${recipe.cookTime} min` : ""}
+                            <p className="text-xs text-gray-400 flex items-center gap-2">
+                              {recipe.prepTime ? <span><FontAwesomeIcon icon={faStopwatch} /> {recipe.prepTime} min</span> : null}
+                              {recipe.cookTime ? <span><FontAwesomeIcon icon={faFire} /> {recipe.cookTime} min</span> : null}
                             </p>
                           </Link>
                           <button
@@ -357,7 +373,7 @@ export default function SearchPage() {
                                 : "bg-red-600 text-white hover:bg-red-700"
                             }`}
                           >
-                            {copySuccess === recipe.id ? "✅ Copié" : "📋 Copier"}
+                            {copySuccess === recipe.id ? <><FontAwesomeIcon icon={faCircleCheck} /> Copié</> : <><FontAwesomeIcon icon={faClipboardList} /> Copier</>}
                           </button>
                         </div>
                       ))}
@@ -369,7 +385,7 @@ export default function SearchPage() {
           )}
           {!cSearched && (
             <div className="text-center py-12 text-gray-300 dark:text-gray-600">
-              <p className="text-5xl mb-3">📚</p>
+              <p className="text-5xl mb-3"><FontAwesomeIcon icon={faBook} /></p>
               <p>Recherchez parmi les cookbooks partagés par la communauté</p>
             </div>
           )}

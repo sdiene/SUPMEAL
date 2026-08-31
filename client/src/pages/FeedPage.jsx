@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getFeed } from "../api/profiles";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRss, faUtensils, faGlobe, faStopwatch, faFire } from "@fortawesome/free-solid-svg-icons";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export default function FeedPage() {
   const [recipes, setRecipes] = useState([]);
@@ -16,7 +18,7 @@ export default function FeedPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">
-        📡 Fil d'actualité
+<FontAwesomeIcon icon={faRss} /> Fil d'actualité
       </h1>
       <p className="text-gray-400 text-sm mb-6">
         Les dernières recettes des cuisiniers que vous suivez
@@ -24,7 +26,7 @@ export default function FeedPage() {
 
       {recipes.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
-          <p className="text-4xl mb-3">📡</p>
+          <p className="text-4xl mb-3"><FontAwesomeIcon icon={faRss} /></p>
           <p className="text-gray-400 mb-2">Votre fil est vide pour l'instant</p>
           <p className="text-gray-300 dark:text-gray-600 text-sm mb-4">
             Suivez des cuisiniers pour voir leurs nouvelles recettes ici
@@ -33,7 +35,7 @@ export default function FeedPage() {
             to="/search"
             className="inline-block bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700"
           >
-            🌍 Découvrir des cuisiniers
+            <FontAwesomeIcon icon={faGlobe} /> Découvrir des cuisiniers
           </Link>
         </div>
       ) : (
@@ -52,7 +54,7 @@ export default function FeedPage() {
                 />
               ) : (
                 <div className="w-full h-40 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-4xl">
-                  🍽️
+                  <FontAwesomeIcon icon={faUtensils} />
                 </div>
               )}
               <div className="p-4">
@@ -69,9 +71,9 @@ export default function FeedPage() {
                     {recipe.user?.name}
                   </span>
                 </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  {recipe.prepTime ? `⏱ ${recipe.prepTime} min` : ""}
-                  {recipe.cookTime ? ` · 🔥 ${recipe.cookTime} min` : ""}
+                <p className="text-xs text-gray-400 mt-1 flex items-center gap-2">
+                  {recipe.prepTime ? <span><FontAwesomeIcon icon={faStopwatch} /> {recipe.prepTime} min</span> : null}
+                  {recipe.cookTime ? <span><FontAwesomeIcon icon={faFire} /> {recipe.cookTime} min</span> : null}
                 </p>
                 <div className="flex gap-1 mt-2 flex-wrap">
                   {recipe.tags?.slice(0, 3).map((rt) => (

@@ -2,12 +2,24 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getWeekPlan, addToMealPlan, removeFromMealPlan, getShoppingList } from "../api/mealplan";
 import { getRecipes } from "../api/recipes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCalendarDays,
+  faChevronLeft,
+  faChevronRight,
+  faCartShopping,
+  faXmark,
+  faPlus,
+  faSun,
+  faMoon,
+  faAppleWhole,
+} from "@fortawesome/free-solid-svg-icons";
 const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 const MEAL_TYPES = [
-  { value: "BREAKFAST", label: "🌅 Petit-déjeuner" },
-  { value: "LUNCH", label: "☀️ Déjeuner" },
-  { value: "DINNER", label: "🌙 Dîner" },
-  { value: "SNACK", label: "🍎 Collation" },
+  { value: "BREAKFAST", label: <><FontAwesomeIcon icon={faSun} /> Petit-déjeuner</> },
+  { value: "LUNCH", label: <><FontAwesomeIcon icon={faSun} /> Déjeuner</> },
+  { value: "DINNER", label: <><FontAwesomeIcon icon={faMoon} /> Dîner</> },
+  { value: "SNACK", label: <><FontAwesomeIcon icon={faAppleWhole} /> Collation</> },
 ];
 function getMonday(date) {
   const d = new Date(date);
@@ -106,7 +118,7 @@ export default function MealPlanPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">📅 Planning de repas</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white"><FontAwesomeIcon icon={faCalendarDays} /> Planning de repas</h1>
           <p className="text-gray-400 text-sm mt-1">{weekLabel}</p>
         </div>
         <div className="flex gap-3">
@@ -114,7 +126,7 @@ export default function MealPlanPage() {
             onClick={() => setWeekStart(addDays(weekStart, -7))}
             className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 dark:hover:bg-gray-600"
           >
-            ← Semaine précédente
+<FontAwesomeIcon icon={faChevronLeft} /> Semaine précédente
           </button>
           <button
             onClick={() => setWeekStart(getMonday(new Date()))}
@@ -126,13 +138,13 @@ export default function MealPlanPage() {
             onClick={() => setWeekStart(addDays(weekStart, 7))}
             className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 dark:hover:bg-gray-600"
           >
-            Semaine suivante →
+            Semaine suivante <FontAwesomeIcon icon={faChevronRight} />
           </button>
           <button
             onClick={handleShoppingList}
             className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700"
           >
-            🛒 Liste de courses
+            <FontAwesomeIcon icon={faCartShopping} /> Liste de courses
           </button>
         </div>
       </div>
@@ -182,7 +194,7 @@ export default function MealPlanPage() {
                                 onClick={() => handleRemove(plan.id)}
                                 className="absolute top-1 right-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity text-xs"
                               >
-                                ×
+                                <FontAwesomeIcon icon={faXmark} />
                               </button>
                             </div>
                           ))}
@@ -193,7 +205,7 @@ export default function MealPlanPage() {
                             }}
                             className="w-full text-xs text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded py-1 transition-colors"
                           >
-                            + Ajouter
+                            <FontAwesomeIcon icon={faPlus} /> Ajouter
                           </button>
                         </div>
                       </td>
@@ -213,7 +225,7 @@ export default function MealPlanPage() {
               <h2 className="font-semibold text-gray-800 dark:text-white">
                 Ajouter une recette
               </h2>
-              <button onClick={() => setShowModal(null)} className="text-gray-400 hover:text-gray-600 text-xl">×</button>
+              <button onClick={() => setShowModal(null)} className="text-gray-400 hover:text-gray-600 text-xl"><FontAwesomeIcon icon={faXmark} /></button>
             </div>
             <p className="text-sm text-gray-400 mb-4">
               {MEAL_TYPES.find((m) => m.value === showModal.mealType)?.label} —{" "}
@@ -254,9 +266,9 @@ export default function MealPlanPage() {
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-gray-800 dark:text-white">
-                🛒 Liste de courses — semaine du {weekStart.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
+<FontAwesomeIcon icon={faCartShopping} /> Liste de courses — semaine du {weekStart.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
               </h2>
-              <button onClick={() => setShowShopping(false)} className="text-gray-400 hover:text-gray-600 text-xl">×</button>
+              <button onClick={() => setShowShopping(false)} className="text-gray-400 hover:text-gray-600 text-xl"><FontAwesomeIcon icon={faXmark} /></button>
             </div>
 
             {shoppingLoading ? (

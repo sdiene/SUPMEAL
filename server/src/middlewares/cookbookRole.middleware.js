@@ -8,7 +8,7 @@ export function requireCookbookRole(minRole) {
       return res.status(403).json({ error: "Vous n'êtes pas membre de ce cookbook" });
     }
     if (ROLE_LEVELS[role] < ROLE_LEVELS[minRole]) {
-      return res.status(403).json({ error: "Permissions insuffisantes" });
+      return res.status(403).json({ error: "Permissions insuffisantes" });§
     }
     req.cookbookRole = role;
     next();

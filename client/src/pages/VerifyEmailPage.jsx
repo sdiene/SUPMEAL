@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import apiClient from "../api/client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 export default function VerifyEmailPage() {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState("loading");
@@ -31,7 +33,7 @@ export default function VerifyEmailPage() {
         )}
         {status === "success" && (
           <>
-            <p className="text-4xl mb-4">✅</p>
+            <p className="text-4xl mb-4"><FontAwesomeIcon icon={faCircleCheck} /></p>
             <h1 className="text-xl font-bold text-gray-800 mb-2">Email vérifié !</h1>
             <p className="text-gray-400 mb-2">Votre compte est maintenant actif.</p>
             <p className="text-sm text-gray-400">Redirection vers la connexion...</p>
@@ -39,7 +41,7 @@ export default function VerifyEmailPage() {
         )}
         {status === "error" && (
           <>
-            <p className="text-4xl mb-4">❌</p>
+            <p className="text-4xl mb-4"><FontAwesomeIcon icon={faCircleXmark} /></p>
             <h1 className="text-xl font-bold text-gray-800 mb-2">Lien invalide ou expiré</h1>
             <p className="text-gray-400 mb-6">
               Le lien de vérification est invalide ou a expiré (24h).

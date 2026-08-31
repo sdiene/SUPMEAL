@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getRating, rateRecipe } from "../api/ratings";
 import StarRating from "./StarRating";
 import { useAuth } from "../context/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 export default function RatingSection({ recipeId }) {
   const { user } = useAuth();
   const [average, setAverage] = useState(null);
@@ -36,7 +38,7 @@ export default function RatingSection({ recipeId }) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mt-4">
       <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">
-        ⭐ Notes
+<FontAwesomeIcon icon={faStar} /> Notes
       </h2>
 
       {/* Moyenne */}

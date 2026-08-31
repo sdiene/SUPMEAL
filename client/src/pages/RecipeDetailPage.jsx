@@ -6,6 +6,26 @@ import CommentsSection from "../components/CommentsSection";
 import RatingSection from "../components/RatingSection";
 import { useAuth } from "../context/AuthContext";
 import { useAllergyCheck } from "../hooks/useAllergyCheck";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChevronLeft,
+  faStar,
+  faCircleCheck,
+  faCalendarDays,
+  faDownload,
+  faGlobe,
+  faLock,
+  faPen,
+  faTrash,
+  faStopwatch,
+  faFire,
+  faUsers,
+  faTriangleExclamation,
+  faBowlFood,
+  faCartShopping,
+  faClipboardList,
+} from "@fortawesome/free-solid-svg-icons";
+import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export default function RecipeDetailPage() {
   const { id } = useParams();
@@ -91,7 +111,7 @@ export default function RecipeDetailPage() {
           onClick={() => navigate(-1)}
           className="text-gray-400 hover:text-gray-600 text-sm"
         >
-          ← Retour
+<FontAwesomeIcon icon={faChevronLeft} /> Retour
         </button>
       </div>
 
@@ -112,7 +132,7 @@ export default function RecipeDetailPage() {
             className="text-2xl"
             title={recipe.isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
           >
-            {recipe.isFavorite ? "⭐" : "☆"}
+            <FontAwesomeIcon icon={recipe.isFavorite ? faStar : faStarRegular} />
           </button>
           {/* Ajouter au planning */}
           <button
@@ -124,7 +144,7 @@ export default function RecipeDetailPage() {
                 : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
             } disabled:opacity-50`}
           >
-            {planSuccess ? "✅ Ajouté !" : addingToPlan ? "..." : "📅 Planning"}
+            {planSuccess ? <><FontAwesomeIcon icon={faCircleCheck} /> Ajouté !</> : addingToPlan ? "..." : <><FontAwesomeIcon icon={faCalendarDays} /> Planning</>}
           </button>
 
           {/* Export */}
@@ -133,7 +153,7 @@ export default function RecipeDetailPage() {
               onClick={() => setShowExportMenu((v) => !v)}
               className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             >
-              ⬇️ Exporter
+<FontAwesomeIcon icon={faDownload} /> Exporter
             </button>
             {showExportMenu && (
               <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden z-10 w-32">
@@ -162,28 +182,28 @@ export default function RecipeDetailPage() {
                   : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200"
               }`}
             >
-              {recipe.isPublic ? "🌍 Publique" : "🔒 Privée"}
+              {recipe.isPublic ? <><FontAwesomeIcon icon={faGlobe} /> Publique</> : <><FontAwesomeIcon icon={faLock} /> Privée</>}
             </button>
           )}
           {recipe.userId === user?.id && <Link
             to={`/recipes/${id}/edit`}
             className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
           >
-            ✏️ Modifier
+<FontAwesomeIcon icon={faPen} /> Modifier
           </Link>}
           {recipe.userId === user?.id && <button
             onClick={handleDelete}
             className="text-sm bg-red-50 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors"
           >
-            🗑️ Supprimer
+            <FontAwesomeIcon icon={faTrash} /> Supprimer
           </button>}
         </div>
       </div>
       {/* Méta */}
       <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
-        {recipe.prepTime && <span>⏱ Prépa : {recipe.prepTime} min</span>}
-        {recipe.cookTime && <span>🔥 Cuisson : {recipe.cookTime} min</span>}
-        {recipe.servings && <span>👥 {recipe.servings} portions</span>}
+        {recipe.prepTime && <span><FontAwesomeIcon icon={faStopwatch} /> Prépa : {recipe.prepTime} min</span>}
+        {recipe.cookTime && <span><FontAwesomeIcon icon={faFire} /> Cuisson : {recipe.cookTime} min</span>}
+        {recipe.servings && <span><FontAwesomeIcon icon={faUsers} /> {recipe.servings} portions</span>}
       </div>
       {/* Tags */}
       {recipe.tags?.length > 0 && (
@@ -204,7 +224,7 @@ export default function RecipeDetailPage() {
           <div className="mb-6 space-y-2">
             {conflicts.length > 0 && (
               <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                <span className="text-lg">⚠️</span>
+                <span className="text-lg"><FontAwesomeIcon icon={faTriangleExclamation} /></span>
                 <div>
                   <p className="text-sm font-medium text-red-700 dark:text-red-400">Allergènes détectés</p>
                   <p className="text-xs text-red-600 dark:text-red-300 mt-0.5">
@@ -215,7 +235,7 @@ export default function RecipeDetailPage() {
             )}
             {!dietOk && (
               <div className="flex items-start gap-2 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
-                <span className="text-lg">🥗</span>
+                <span className="text-lg"><FontAwesomeIcon icon={faBowlFood} /></span>
                 <div>
                   <p className="text-sm font-medium text-orange-700 dark:text-orange-400">Incompatible avec votre régime</p>
                   <p className="text-xs text-orange-600 dark:text-orange-300 mt-0.5">
@@ -237,7 +257,7 @@ export default function RecipeDetailPage() {
       {/* Ingrédients */}
       {recipe.ingredients?.length > 0 && (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-4">
-          <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">🛒 Ingrédients</h2>
+          <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4"><FontAwesomeIcon icon={faCartShopping} /> Ingrédients</h2>
           <ul className="space-y-2">
             {recipe.ingredients.map((ing) => (
               <li key={ing.id} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
@@ -257,7 +277,7 @@ export default function RecipeDetailPage() {
       {/* Étapes */}
       {recipe.steps?.length > 0 && (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-          <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">📋 Étapes</h2>
+          <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4"><FontAwesomeIcon icon={faClipboardList} /> Étapes</h2>
           <ol className="space-y-4">
             {[...recipe.steps]
               .sort((a, b) => a.order - b.order)

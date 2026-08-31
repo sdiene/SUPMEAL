@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getProfile, toggleFollow } from "../api/profiles";
 import { useAuth } from "../context/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGear, faCheck, faPlus, faUtensils, faStopwatch, faFire, faBook } from "@fortawesome/free-solid-svg-icons";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export default function PublicProfilePage() {
   const { userId } = useParams();
@@ -69,7 +71,7 @@ export default function PublicProfilePage() {
               to="/settings"
               className="px-5 py-2 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             >
-              ⚙️ Modifier le profil
+<FontAwesomeIcon icon={faGear} /> Modifier le profil
             </Link>
           ) : (
             <button
@@ -81,7 +83,7 @@ export default function PublicProfilePage() {
                   : "bg-red-600 text-white hover:bg-red-700"
               } disabled:opacity-50`}
             >
-              {followLoading ? "..." : following ? "✓ Suivi" : "+ Suivre"}
+              {followLoading ? "..." : following ? <><FontAwesomeIcon icon={faCheck} /> Suivi</> : <><FontAwesomeIcon icon={faPlus} /> Suivre</>}
             </button>
           )}
         </div>
@@ -106,7 +108,7 @@ export default function PublicProfilePage() {
       {/* Recettes publiques */}
       <div className="mb-6">
         <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">
-          🍽️ Recettes publiques ({recipes.length})
+<FontAwesomeIcon icon={faUtensils} /> Recettes publiques ({recipes.length})
         </h2>
         {recipes.length === 0 ? (
           <p className="text-gray-400 text-sm">Aucune recette publique</p>
@@ -121,13 +123,13 @@ export default function PublicProfilePage() {
                 {recipe.imageUrl ? (
                   <img src={API_URL + recipe.imageUrl} alt={recipe.title} className="w-full h-36 object-cover" />
                 ) : (
-                  <div className="w-full h-36 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-3xl">🍽️</div>
+                  <div className="w-full h-36 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-3xl"><FontAwesomeIcon icon={faUtensils} /></div>
                 )}
                 <div className="p-3">
                   <h3 className="font-semibold text-gray-800 dark:text-white text-sm">{recipe.title}</h3>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {recipe.prepTime ? `⏱ ${recipe.prepTime} min` : ""}
-                    {recipe.cookTime ? ` · 🔥 ${recipe.cookTime} min` : ""}
+                  <p className="text-xs text-gray-400 mt-1 flex items-center gap-2">
+                    {recipe.prepTime ? <span><FontAwesomeIcon icon={faStopwatch} /> {recipe.prepTime} min</span> : null}
+                    {recipe.cookTime ? <span><FontAwesomeIcon icon={faFire} /> {recipe.cookTime} min</span> : null}
                   </p>
                   <div className="flex gap-1 mt-2 flex-wrap">
                     {recipe.tags?.slice(0, 2).map((rt) => (
@@ -147,12 +149,12 @@ export default function PublicProfilePage() {
       {cookbooks.length > 0 && (
         <div>
           <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">
-            📚 Cookbooks publics ({cookbooks.length})
+<FontAwesomeIcon icon={faBook} /> Cookbooks publics ({cookbooks.length})
           </h2>
           <div className="space-y-3">
             {cookbooks.map((cb) => (
               <div key={cb.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-                <h3 className="font-semibold text-gray-800 dark:text-white">📚 {cb.name}</h3>
+                <h3 className="font-semibold text-gray-800 dark:text-white"><FontAwesomeIcon icon={faBook} /> {cb.name}</h3>
                 {cb.description && <p className="text-sm text-gray-400 mt-1">{cb.description}</p>}
                 <p className="text-xs text-gray-400 mt-2">{cb.recipes.length} recette{cb.recipes.length > 1 ? "s" : ""}</p>
               </div>

@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { getComments, postComment, deleteComment } from "../api/comments";
 import { useAuth } from "../context/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComment, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 export default function CommentsSection({ recipeId }) {
   const { user } = useAuth();
@@ -47,7 +49,7 @@ export default function CommentsSection({ recipeId }) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mt-4">
       <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">
-        💬 Commentaires ({comments.length})
+<FontAwesomeIcon icon={faComment} /> Commentaires ({comments.length})
       </h2>
 
       {loading ? (
@@ -86,7 +88,7 @@ export default function CommentsSection({ recipeId }) {
                   onClick={() => handleDelete(comment.id)}
                   className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity text-xs self-start mt-1"
                 >
-                  ×
+                  <FontAwesomeIcon icon={faXmark} />
                 </button>
               )}
             </div>

@@ -5,6 +5,20 @@ import { useAllergyCheck } from "../hooks/useAllergyCheck";
 import { searchRecipes } from "../api/search";
 import { getCookbooks } from "../api/cookbooks";
 import RecipeCard from "../components/RecipeCard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPlus,
+  faSliders,
+  faMagnifyingGlass,
+  faBook,
+  faCartShopping,
+  faTag,
+  faStopwatch,
+  faFire,
+  faStar,
+  faBowlFood,
+  faUtensils,
+} from "@fortawesome/free-solid-svg-icons";
 export default function RecipesPage() {
   const [allRecipes, setAllRecipes] = useState([]);
   const [displayed, setDisplayed] = useState([]);
@@ -98,7 +112,7 @@ export default function RecipesPage() {
           to="/recipes/new"
           className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
         >
-          + Nouvelle recette
+          <FontAwesomeIcon icon={faPlus} /> Nouvelle recette
         </Link>
       </div>
       {/* Barre de recherche */}
@@ -120,13 +134,13 @@ export default function RecipesPage() {
                 : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             }`}
           >
-            🎛️ Filtres
+<FontAwesomeIcon icon={faSliders} /> Filtres
           </button>
           <button
             type="submit"
             className="bg-red-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-red-700"
           >
-            🔍
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
           </button>
         </div>
         {/* Filtres avancés */}
@@ -134,7 +148,7 @@ export default function RecipesPage() {
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-3">
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">📚 Cookbook</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><FontAwesomeIcon icon={faBook} /> Cookbook</label>
                 <select
                   value={cookbookId}
                   onChange={(e) => setCookbookId(e.target.value)}
@@ -147,7 +161,7 @@ export default function RecipesPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🛒 Ingrédient</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><FontAwesomeIcon icon={faCartShopping} /> Ingrédient</label>
                 <input
                   type="text"
                   value={ingredient}
@@ -157,7 +171,7 @@ export default function RecipesPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🏷️ Tags</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><FontAwesomeIcon icon={faTag} /> Tags</label>
                 <input
                   type="text"
                   value={tags}
@@ -167,7 +181,7 @@ export default function RecipesPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">⏱ Prépa max (min)</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><FontAwesomeIcon icon={faStopwatch} /> Prépa max (min)</label>
                 <input
                   type="number"
                   value={maxPrepTime}
@@ -177,7 +191,7 @@ export default function RecipesPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🔥 Cuisson max (min)</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><FontAwesomeIcon icon={faFire} /> Cuisson max (min)</label>
                 <input
                   type="number"
                   value={maxCookTime}
@@ -194,7 +208,7 @@ export default function RecipesPage() {
                   onChange={(e) => setFavoritesOnly(e.target.checked)}
                   className="w-4 h-4 accent-red-600"
                 />
-                <label htmlFor="favOnly" className="text-sm text-gray-700 dark:text-gray-300">⭐ Favoris</label>
+                <label htmlFor="favOnly" className="text-sm text-gray-700 dark:text-gray-300"><FontAwesomeIcon icon={faStar} /> Favoris</label>
               </div>
               <div className="flex items-center gap-2 pt-5">
                 <input
@@ -204,7 +218,7 @@ export default function RecipesPage() {
                   onChange={(e) => setProfileFilter(e.target.checked)}
                   className="w-4 h-4 accent-red-600"
                 />
-                <label htmlFor="profileFilter" className="text-sm text-gray-700 dark:text-gray-300">🥗 Compatible mon profil</label>
+                <label htmlFor="profileFilter" className="text-sm text-gray-700 dark:text-gray-300"><FontAwesomeIcon icon={faBowlFood} /> Compatible mon profil</label>
               </div>
             </div>
             <div className="flex gap-2 pt-1">
@@ -224,7 +238,7 @@ export default function RecipesPage() {
         <p className="text-gray-400">Chargement...</p>
       ) : displayed.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
-          <p className="text-4xl mb-3">🍽️</p>
+          <p className="text-4xl mb-3"><FontAwesomeIcon icon={faUtensils} /></p>
           <p className="text-gray-400 mb-4">
             {isFiltering ? "Aucune recette ne correspond à vos critères" : "Aucune recette pour l'instant"}
           </p>
